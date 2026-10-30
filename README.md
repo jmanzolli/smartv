@@ -1,4 +1,4 @@
-# SmarTV
+# ClaudeTV
 
 Tela inicial pessoal para Fire TV. Mostra relógio, clima, agenda do dia, manchetes e fotos de fundo, além dos atalhos para os apps. Tudo é navegado pelo controle remoto e aparece em português, inglês, francês ou espanhol.
 
@@ -16,7 +16,7 @@ Só é preciso fazer uma vez:
    github.com/jmanzolli/smartv/releases/latest/download/smartv.apk
    ```
 
-5. Abra **SmarTV** em **Seus apps**. Para deixá-lo em primeiro lugar, selecione o app, aperte o botão ☰ do controle e escolha **Mover para a frente**.
+5. Abra **ClaudeTV** em **Seus apps**. Para deixá-lo em primeiro lugar, selecione o app, aperte o botão ☰ do controle e escolha **Mover para a frente**.
 
 Para atualizar, repita o passo 4. As configurações são mantidas.
 
@@ -41,7 +41,7 @@ Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 
 ## Limites do Fire OS
 
-- **O botão Home sempre volta para a tela da Amazon.** O Fire OS não deixa outro app virar a tela inicial padrão. O SmarTV fica em primeiro lugar em *Seus apps*, e a opção *Abrir ao ligar a TV* tenta abri-lo depois que a TV liga. Nas versões mais novas do Fire OS essa abertura automática pode ser bloqueada.
+- **O botão Home sempre volta para a tela da Amazon.** O Fire OS não deixa outro app virar a tela inicial padrão. O ClaudeTV fica em primeiro lugar em *Seus apps*, e a opção *Abrir ao ligar a TV* tenta abri-lo depois que a TV liga. Nas versões mais novas do Fire OS essa abertura automática pode ser bloqueada.
 - **Apps que não estão instalados aparecem com a etiqueta "Instalar".** Com OK, a Appstore abre na página do app.
 
 ## Mudar os apps da fileira
