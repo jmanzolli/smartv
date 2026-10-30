@@ -4,9 +4,13 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.view.KeyEvent
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
@@ -16,6 +20,7 @@ import android.webkit.WebViewClient
 import androidx.webkit.WebViewAssetLoader
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
@@ -41,6 +46,12 @@ class MainActivity : Activity() {
         web.setBackgroundColor(Color.parseColor("#0E1433"))
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
+        // Lay the page out 1920 CSS pixels wide (its viewport tag) and shrink it to the screen,
+        // whatever resolution and density the TV reports; ignore the system font size too.
+        web.settings.useWideViewPort = true
+        web.settings.loadWithOverviewMode = true
+        web.settings.setSupportZoom(false)
+        web.settings.textZoom = 100
         web.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
                 assets.shouldInterceptRequest(request.url)
@@ -54,6 +65,13 @@ class MainActivity : Activity() {
                 Uri.parse(url).host != WebViewAssetLoader.DEFAULT_DOMAIN
         }
         web.addJavascriptInterface(Bridge(), "TVNative")
+
+        // Some TVs report the final size only after the page has loaded; refit whenever it changes.
+        web.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
+                web.evaluateJavascript("window.tvFit && tvFit()", null)
+            }
+        }
 
         setContentView(web)
         web.loadUrl("https://${WebViewAssetLoader.DEFAULT_DOMAIN}/assets/index.html")
@@ -98,6 +116,26 @@ class MainActivity : Activity() {
 
     /** Methods the page calls as window.TVNative.*. They run on a WebView background thread. */
     inner class Bridge {
+
+        /**
+         * The app's own TV banner (the image the Fire TV home shows) and icon, as {banner, icon} data URLs.
+         * Either may be missing; the page then falls back to a coloured tile.
+         */
+        @JavascriptInterface
+        fun appArt(pkg: String): String {
+            val out = JSONObject()
+            try {
+                val intent = packageManager.getLeanbackLaunchIntentForPackage(pkg)
+                    ?: packageManager.getLaunchIntentForPackage(pkg)
+                    ?: return out.toString()
+                val info = packageManager.resolveActivity(intent, 0)?.activityInfo ?: return out.toString()
+                info.loadBanner(packageManager)?.let { out.put("banner", dataUrl(it, 640)) }
+                info.loadIcon(packageManager)?.let { out.put("icon", dataUrl(it, 192)) }
+            } catch (e: Exception) {
+                // Unreadable artwork; the tile keeps its colour and name.
+            }
+            return out.toString()
+        }
 
         /** Every app with a TV or phone launcher entry, as [{pkg, label}]. */
         @JavascriptInterface
@@ -190,6 +228,20 @@ class MainActivity : Activity() {
         fun setAutoStart(on: Boolean) {
             prefs(this@MainActivity).edit().putBoolean(KEY_AUTOSTART, on).apply()
         }
+    }
+
+    /** Draws a drawable at its own size, at most [maxWidth] wide, as a PNG data URL. */
+    private fun dataUrl(drawable: Drawable, maxWidth: Int): String {
+        val w = if (drawable.intrinsicWidth > 0) drawable.intrinsicWidth else maxWidth
+        val h = if (drawable.intrinsicHeight > 0) drawable.intrinsicHeight else maxWidth
+        val scale = minOf(1f, maxWidth.toFloat() / w)
+        val bitmap = Bitmap.createBitmap((w * scale).toInt().coerceAtLeast(1), (h * scale).toInt().coerceAtLeast(1), Bitmap.Config.ARGB_8888)
+        drawable.setBounds(0, 0, bitmap.width, bitmap.height)
+        drawable.draw(Canvas(bitmap))
+        val png = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, png)
+        bitmap.recycle()
+        return "data:image/png;base64," + Base64.encodeToString(png.toByteArray(), Base64.NO_WRAP)
     }
 
     companion object {

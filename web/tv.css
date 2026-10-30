@@ -260,7 +260,7 @@ body.overcast:not(.has-photo)::before {
   display: flex;
   align-items: flex-end;
   width: 260px;
-  height: 152px;
+  height: 146px; /* 16:9, the shape of Fire TV app banners */
   padding: 18px 24px;
   border: 0;
   border-radius: 22px;
@@ -283,6 +283,25 @@ body.overcast:not(.has-photo)::before {
   right: 22px;
   font-size: 60px;
   opacity: 0.22;
+}
+
+.app .icon {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+}
+
+/* The app's own banner from the TV fills the tile; it already shows the name. */
+.app.has-banner { padding: 0; overflow: hidden; background: #000; }
+.app .banner {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .app .badge {

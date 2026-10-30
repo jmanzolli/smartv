@@ -47,6 +47,7 @@ const STRINGS = {
     calendarHint: 'No Google Agenda, pelo computador: Configurações → sua agenda → Endereço secreto no formato iCal. Dica: o app Amazon Fire TV no celular tem um teclado para colar o endereço.',
     news: 'Manchetes', newsSource: 'Fonte das manchetes', newsAuto: 'Seguir o idioma',
     newsError: 'Sem manchetes agora. Nova tentativa em alguns minutos.',
+    margin: 'Margem da tela', marginHint: 'Se as bordas ficarem cortadas na TV, aumente a margem.',
     photos: 'Fotos de fundo', autostart: 'Abrir ao ligar a TV', on: 'Ligado', off: 'Desligado',
     install: 'Instalar',
     wx: ['Céu limpo', 'Quase limpo', 'Parcialmente nublado', 'Nublado', 'Neblina', 'Garoa', 'Chuva',
@@ -70,6 +71,7 @@ const STRINGS = {
     calendarHint: 'In Google Calendar on a computer: Settings → your calendar → Secret address in iCal format. Tip: the Amazon Fire TV phone app has a keyboard for pasting it.',
     news: 'Headlines', newsSource: 'Headline source', newsAuto: 'Match the language',
     newsError: 'No headlines right now. Trying again in a few minutes.',
+    margin: 'Screen margin', marginHint: 'If the edges are cut off on the TV, increase the margin.',
     photos: 'Background photos', autostart: 'Open when the TV turns on', on: 'On', off: 'Off',
     install: 'Install',
     wx: ['Clear sky', 'Mostly clear', 'Partly cloudy', 'Overcast', 'Fog', 'Drizzle', 'Rain',
@@ -93,6 +95,7 @@ const STRINGS = {
     calendarHint: 'Dans Google Agenda sur ordinateur : Paramètres → votre agenda → Adresse secrète au format iCal. Astuce : l’app Amazon Fire TV sur téléphone a un clavier pour la coller.',
     news: 'Manchettes', newsSource: 'Source des manchettes', newsAuto: 'Selon la langue',
     newsError: 'Pas de manchettes pour l’instant. Nouvel essai dans quelques minutes.',
+    margin: "Marge de l'écran", marginHint: 'Si les bords sont coupés sur la télé, augmentez la marge.',
     photos: 'Photos en arrière-plan', autostart: 'Ouvrir au démarrage de la télé', on: 'Activé', off: 'Désactivé',
     install: 'Installer',
     wx: ['Ciel dégagé', 'Plutôt dégagé', 'Partiellement nuageux', 'Couvert', 'Brouillard', 'Bruine', 'Pluie',
@@ -116,6 +119,7 @@ const STRINGS = {
     calendarHint: 'En Google Calendar desde el ordenador: Configuración → tu calendario → Dirección secreta en formato iCal. Consejo: la app Amazon Fire TV del móvil tiene un teclado para pegarla.',
     news: 'Titulares', newsSource: 'Fuente de titulares', newsAuto: 'Según el idioma',
     newsError: 'Sin titulares ahora. Nuevo intento en unos minutos.',
+    margin: 'Margen de la pantalla', marginHint: 'Si los bordes se ven cortados en la tele, aumenta el margen.',
     photos: 'Fotos de fondo', autostart: 'Abrir al encender la tele', on: 'Activado', off: 'Desactivado',
     install: 'Instalar',
     wx: ['Despejado', 'Mayormente despejado', 'Parcialmente nublado', 'Nublado', 'Niebla', 'Llovizna', 'Lluvia',
@@ -145,6 +149,7 @@ const prefs = {
   calendarUrl: store.get('calendarUrl', ''),
   news: store.get('news', 'auto'),
   photos: store.get('photos', true),
+  margin: store.get('margin', 0),
 };
 
 const t = (key) => STRINGS[prefs.lang][key];
@@ -183,11 +188,19 @@ function fetchText(url) {
 
 // ---------- Fit the 1920×1080 stage to any screen ----------
 
+const MARGINS = [0, 2.5, 5, 7.5]; // percent of the screen left empty on each side
+
+// The app also calls this when the WebView changes size, since a TV may report its real size late.
 function fitStage() {
-  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  const w = document.documentElement.clientWidth || window.innerWidth;
+  const h = document.documentElement.clientHeight || window.innerHeight;
+  if (!w || !h) return;
+  const scale = Math.min(w / 1920, h / 1080) * (1 - prefs.margin / 50);
   $('stage').style.transform = `translate(-50%, -50%) scale(${scale})`;
 }
+window.tvFit = fitStage;
 window.addEventListener('resize', fitStage);
+window.addEventListener('load', fitStage);
 
 // ---------- Clock, date, greeting, sky ----------
 
@@ -470,13 +483,31 @@ function packageFor(app) {
   return byLabel ? byLabel.pkg : null;
 }
 
+// Each installed app's own banner and icon, read once from the TV.
+const art = {};
+
+function artFor(pkg) {
+  if (!(pkg in art)) {
+    try { art[pkg] = native.appArt ? JSON.parse(native.appArt(pkg)) : {}; } catch (e) { art[pkg] = {}; }
+  }
+  return art[pkg];
+}
+
 function renderApps() {
   refreshInstalled();
   $('app-row').innerHTML = APPS.map((app, i) => {
-    const missing = installed && !packageFor(app);
-    return `<li><button class="app" data-nav data-app="${i}" style="--tile:${app.color};${app.ink ? `--tile-ink:${app.ink}` : ''}">`
-      + (missing ? `<span class="badge">${t('install')}</span>` : '')
-      + `<span class="mark" aria-hidden="true">${app.name[0]}</span>${escapeHtml(app.name)}</button></li>`;
+    const pkg = packageFor(app);
+    const look = pkg ? artFor(pkg) : {};
+    const name = escapeHtml(app.name);
+    const open = `<li><button class="app${look.banner ? ' has-banner' : ''}" data-nav data-app="${i}" aria-label="${name}"`
+      + ` style="--tile:${app.color};${app.ink ? `--tile-ink:${app.ink}` : ''}">`;
+    if (look.banner) return open + `<img class="banner" src="${look.banner}" alt=""></button></li>`;
+    const mark = look.icon
+      ? `<img class="icon" src="${look.icon}" alt="">`
+      : `<span class="mark" aria-hidden="true">${app.name[0]}</span>`;
+    return open
+      + (installed && !pkg ? `<span class="badge">${t('install')}</span>` : '')
+      + mark + name + '</button></li>';
   }).join('');
 }
 
@@ -498,6 +529,10 @@ function renderChoices() {
   ).join('');
   $('hour-choices').innerHTML = [false, true].map((h12) =>
     `<button data-nav data-hour12="${h12}" ${pressed(h12 === prefs.hour12)}>${h12 ? '12 h' : '24 h'}</button>`
+  ).join('');
+  const percent = new Intl.NumberFormat(t('locale'), { maximumFractionDigits: 1 });
+  $('margin-choices').innerHTML = MARGINS.map((m) =>
+    `<button data-nav data-margin="${m}" ${pressed(m === prefs.margin)}>${percent.format(m)}%</button>`
   ).join('');
   const newsKeys = ['auto'].concat(Object.keys(NEWS), ['off']);
   $('news-choices').innerHTML = newsKeys.map((key) => {
@@ -567,6 +602,11 @@ $('settings').addEventListener('click', (e) => {
     renderClock();
     renderAgenda();
     selector = `[data-hour12="${d.hour12}"]`;
+  } else if (d.margin) {
+    prefs.margin = Number(d.margin);
+    store.set('margin', prefs.margin);
+    fitStage();
+    selector = `[data-margin="${d.margin}"]`;
   } else if (d.news) {
     prefs.news = d.news;
     store.set('news', prefs.news);
@@ -716,6 +756,7 @@ window.tvMenu = () => {
   if ($('settings').hidden) openSettings(); else closeSettings();
 };
 window.tvResume = () => {
+  fitStage();
   renderClock();
   renderApps();
   if (current && current.classList.contains('app')) focus($('app-row').querySelector(`[data-app="${current.dataset.app}"]`));
