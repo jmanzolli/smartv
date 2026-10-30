@@ -1,0 +1,378 @@
+/* TV home — laid out on a fixed 1920×1080 stage that tv.js scales to the screen. */
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url(fonts/bricolage-grotesque-latin.woff2) format('woff2');
+}
+
+:root {
+  --ink: #FFF8EE;
+  --ink-soft: rgba(255, 248, 238, 0.78);
+  --ink-faint: rgba(255, 248, 238, 0.5);
+  --focus: #FFE3A3;
+  --panel: #15122B;
+  --sky-top: #0E1433;
+  --sky-bottom: #2B1F5C;
+  --glow: rgba(120, 110, 255, 0.25);
+}
+
+/* Without a photo, the sky follows the hour; tv.js sets the class on <body>. */
+.sky-dawn  { --sky-top: #5B4D93; --sky-bottom: #F0A27E; --glow: rgba(255, 200, 150, 0.35); }
+.sky-day   { --sky-top: #1D5596; --sky-bottom: #5B95C9; --glow: rgba(255, 255, 230, 0.22); --ink-soft: rgba(255, 248, 238, 0.86); }
+.sky-dusk  { --sky-top: #33255F; --sky-bottom: #D96A57; --glow: rgba(255, 150, 110, 0.35); }
+.sky-night { --sky-top: #0E1433; --sky-bottom: #2B1F5C; --glow: rgba(120, 110, 255, 0.25); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse 70% 55% at 78% 100%, var(--glow), transparent 70%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  background-color: var(--sky-top);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.25);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Background photo ---------- */
+
+.backdrop, .photo, .scrim, body.overcast::before {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+
+.photo {
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 2.4s ease-in-out;
+}
+.photo.is-shown { opacity: 1; }
+
+/* Darkens the photo where text sits: left for the clock and agenda, right for weather and news, bottom for apps. */
+.scrim {
+  opacity: 0;
+  transition: opacity 1s;
+  background:
+    linear-gradient(0deg, rgba(6, 8, 20, 0.78) 0%, rgba(6, 8, 20, 0) 38%),
+    linear-gradient(90deg, rgba(6, 8, 20, 0.62) 0%, rgba(6, 8, 20, 0.22) 50%, rgba(6, 8, 20, 0.55) 100%);
+}
+body.has-photo .scrim { opacity: 1; }
+
+body.overcast:not(.has-photo)::before {
+  content: '';
+  background: rgba(70, 76, 96, 0.38);
+  pointer-events: none;
+}
+
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- Home ---------- */
+
+.home {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  padding: 64px 112px 24px;
+  display: grid;
+  grid-template-columns: 1fr 600px;
+  grid-template-rows: auto 1fr auto;
+  column-gap: 96px;
+}
+
+.greeting { font-size: 40px; color: var(--ink-soft); }
+
+.clock {
+  font-size: 232px;
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: baseline;
+}
+
+.clock .digit { display: inline-block; width: 0.56em; text-align: center; }
+.clock .colon { display: inline-block; width: 0.26em; text-align: center; transform: translateY(-0.08em); }
+.clock .ampm  { font-size: 56px; font-weight: 400; margin-left: 20px; color: var(--ink-soft); }
+
+.date { font-size: 46px; margin-top: 12px; }
+.date::first-letter { text-transform: uppercase; }
+
+/* ---------- Weather ---------- */
+
+.weather { padding-top: 56px; }
+
+.weather-now { display: flex; align-items: center; }
+
+.weather-icon svg {
+  display: block;
+  width: 104px;
+  height: 104px;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.weather-temp {
+  font-size: 120px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 32px 0 20px;
+}
+
+.weather-desc { font-size: 38px; font-weight: 600; line-height: 1.1; }
+.weather-city { font-size: 30px; color: var(--ink-soft); margin-top: 4px; }
+
+.forecast {
+  list-style: none;
+  display: flex;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 2px solid var(--ink-faint);
+}
+
+.forecast li { display: flex; align-items: center; font-size: 28px; margin-right: 44px; }
+.forecast .day { color: var(--ink-soft); margin-right: 10px; }
+.forecast svg { width: 44px; height: 44px; margin-right: 10px; stroke: var(--ink); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.forecast .range { font-weight: 600; }
+.forecast .range span { font-weight: 400; color: var(--ink-soft); margin-left: 8px; }
+
+/* ---------- Agenda and headlines ---------- */
+
+.agenda, .news { padding-top: 44px; overflow: hidden; }
+
+.agenda h2, .news h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+
+.news h2 .source { font-weight: 400; color: var(--ink-faint); margin-left: 10px; }
+
+.agenda-list, .news-list { list-style: none; }
+
+.agenda-list li {
+  display: flex;
+  align-items: baseline;
+  font-size: 34px;
+  line-height: 1.25;
+  padding: 7px 0;
+}
+
+.agenda-list .when {
+  flex: none;
+  width: 290px;
+  color: var(--ink-soft);
+  font-size: 30px;
+}
+
+.agenda-list .what {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 760px;
+}
+
+.agenda-list li.is-now .what { font-weight: 600; }
+
+.news-list li {
+  font-size: 28px;
+  line-height: 1.28;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note { font-size: 28px; color: var(--ink-soft); max-width: 760px; line-height: 1.3; }
+
+.photo-credit {
+  position: absolute;
+  top: 82px;
+  right: 216px;
+  max-width: 560px;
+  font-size: 20px;
+  color: var(--ink-faint);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Settings button ---------- */
+
+.settings-btn {
+  position: absolute;
+  top: 56px;
+  right: 104px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 160ms ease-out, background-color 160ms;
+}
+.settings-btn svg { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+
+/* ---------- Apps ---------- */
+
+/* The row bleeds to the screen edges and slides sideways as focus moves. */
+.apps {
+  grid-column: 1 / -1;
+  margin: 0 -112px;
+  padding: 26px 112px 40px;
+  overflow: hidden;
+}
+
+.app-row {
+  position: relative;
+  list-style: none;
+  display: flex;
+  transition: transform 260ms ease-out;
+}
+
+.app-row li { flex: none; margin-right: 36px; }
+
+.app {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 260px;
+  height: 152px;
+  padding: 18px 24px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--tile);
+  color: var(--tile-ink, #fff);
+  font: inherit;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  text-align: left;
+  text-shadow: none;
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.6);
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.app .mark {
+  position: absolute;
+  top: 12px;
+  right: 22px;
+  font-size: 60px;
+  opacity: 0.22;
+}
+
+.app .badge {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+}
+
+/* ---------- Focus ---------- */
+
+[data-nav] { outline: none; }
+
+.app.is-focused {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px var(--focus), 0 22px 40px -22px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.settings-btn.is-focused {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 0 5px var(--focus);
+  transform: scale(1.1);
+}
+
+/* ---------- Settings panel ---------- */
+
+.settings {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 800px;
+  padding: 64px 88px 64px;
+  background: var(--panel);
+  overflow-y: auto;
+  scrollbar-width: none;
+  text-shadow: none;
+}
+.settings::-webkit-scrollbar { display: none; }
+
+.settings[hidden] { display: none; }
+
+.settings h2 { font-size: 56px; font-weight: 600; margin-bottom: 8px; }
+.settings h3 { font-size: 28px; font-weight: 400; color: var(--ink-soft); margin: 30px 0 14px; }
+
+.choice-row { display: flex; flex-wrap: wrap; }
+.choice-row button { margin: 0 14px 14px 0; }
+
+.settings button,
+.settings input {
+  font: inherit;
+  font-size: 30px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.08);
+  border: 3px solid transparent;
+  border-radius: 16px;
+  padding: 12px 26px;
+}
+
+.settings button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #1E1840;
+  font-weight: 600;
+}
+
+.settings .is-focused { border-color: var(--focus); background-color: rgba(255, 255, 255, 0.18); }
+.settings button[aria-pressed="true"].is-focused { background: var(--ink); }
+
+.field-row { display: flex; }
+.field-row input { flex: 1; min-width: 0; margin-right: 14px; }
+.field-row input::placeholder { color: var(--ink-faint); }
+
+.status { font-size: 26px; color: var(--ink-soft); margin-top: 12px; min-height: 34px; }
+.help { font-size: 24px; color: var(--ink-faint); line-height: 1.35; }
+
+.city-results { display: flex; flex-direction: column; align-items: flex-start; }
+.city-results button { text-align: left; font-size: 28px; padding: 10px 24px; margin-bottom: 10px; }
+.city-results small { color: var(--ink-soft); font-size: 24px; margin-left: 12px; }
+.city-results button.is-focused small { color: inherit; }
+
+.settings-end { margin-top: 44px; }
+.hint { font-size: 24px; color: var(--ink-faint); margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { transition: none !important; }
+}

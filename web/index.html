@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Início</title>
+  <link rel="stylesheet" href="tv.css">
+</head>
+<body class="sky-night">
+
+  <div class="backdrop" aria-hidden="true">
+    <div class="photo" id="photo-a"></div>
+    <div class="photo" id="photo-b"></div>
+    <div class="scrim"></div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <main class="home" id="home">
+      <section class="now">
+        <p class="greeting" id="greeting"></p>
+        <p class="clock" id="clock"></p>
+        <p class="date" id="date"></p>
+      </section>
+
+      <section class="weather" aria-live="polite">
+        <div class="weather-now">
+          <span class="weather-icon" id="weather-icon"></span>
+          <span class="weather-temp" id="weather-temp">–</span>
+          <div>
+            <p class="weather-desc" id="weather-desc"></p>
+            <p class="weather-city" id="weather-city"></p>
+          </div>
+        </div>
+        <ol class="forecast" id="forecast"></ol>
+      </section>
+
+      <section class="agenda">
+        <h2 data-i18n="agenda"></h2>
+        <ol class="agenda-list" id="agenda-list"></ol>
+        <p class="note" id="agenda-note"></p>
+      </section>
+
+      <section class="news">
+        <h2 id="news-title"></h2>
+        <ol class="news-list" id="news-list"></ol>
+        <p class="note" id="news-note"></p>
+      </section>
+
+      <p class="photo-credit" id="photo-credit"></p>
+
+      <button class="settings-btn" id="settings-btn" data-nav data-i18n-label="settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+      </button>
+
+      <nav class="apps" aria-label="Apps">
+        <ul class="app-row" id="app-row"></ul>
+      </nav>
+    </main>
+
+    <aside class="settings" id="settings" hidden>
+      <h2 data-i18n="settings"></h2>
+
+      <h3 data-i18n="language"></h3>
+      <div class="choice-row" id="lang-choices"></div>
+
+      <h3 data-i18n="clockFormat"></h3>
+      <div class="choice-row" id="hour-choices"></div>
+
+      <h3 data-i18n="city"></h3>
+      <form class="field-row" id="city-form" autocomplete="off">
+        <input type="text" id="city-input" data-nav data-i18n-placeholder="cityPlaceholder">
+        <button type="submit" data-nav data-i18n="search"></button>
+      </form>
+      <p class="status" id="city-status"></p>
+      <div class="city-results" id="city-results"></div>
+
+      <h3 data-i18n="calendarLabel"></h3>
+      <form class="field-row" id="calendar-form" autocomplete="off">
+        <input type="url" id="calendar-input" data-nav data-i18n-placeholder="calendarPlaceholder">
+        <button type="submit" data-nav data-i18n="save"></button>
+      </form>
+      <p class="status" id="calendar-status"></p>
+      <p class="help" data-i18n="calendarHint"></p>
+
+      <h3 data-i18n="newsSource"></h3>
+      <div class="choice-row" id="news-choices"></div>
+
+      <h3 data-i18n="photos"></h3>
+      <div class="choice-row" id="photo-choices"></div>
+
+      <div id="autostart-block" hidden>
+        <h3 data-i18n="autostart"></h3>
+        <div class="choice-row" id="autostart-choices"></div>
+      </div>
+
+      <div class="settings-end">
+        <button id="close-settings" data-nav data-i18n="close"></button>
+        <p class="hint" data-i18n="backHint"></p>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="calendar.js"></script>
+  <script src="tv.js"></script>
+</body>
+</html>
