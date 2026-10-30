@@ -38,6 +38,13 @@ Na tela inicial:
 - **Fileira de apps:** o bloco **+** no fim (ou OK segurado sobre um app) abre **Organizar apps**, onde você muda a ordem, remove apps e adiciona qualquer app instalado na TV.
 - **Proteção de tela:** depois de 5 minutos sem mexer no controle, fica só a foto com o relógio, o clima e o próximo evento. Qualquer botão volta. Depois de uma hora assim, a TV volta a poder dormir ou mostrar a proteção de tela dela.
 - **Modo noturno:** das 22:00 às 7:00 a tela escurece, a foto sai e as manchetes somem.
+- **Lembretes:** embaixo da agenda ficam as próximas notas. **+ Nova** cria uma nota com aviso opcional (em 30 min, em 1 hora, hoje às 20:00, amanhã às 8:00). Na hora marcada, um aviso aparece na tela com **Feito** e **Adiar 10 min**.
+
+### Notas pelo celular
+
+Na tela **Lembretes** há um QR code e um endereço do tipo `ntfy.sh/claudetv-xxxxxxxx`, criado só para a sua TV. Abra esse endereço no celular (ou no app **ntfy**) e mande uma mensagem: em até 30 segundos ela vira uma nota na TV. Um horário no texto vira aviso, por exemplo `dentista amanhã 9h` ou `ligar pra mãe às 19:30`.
+
+O serviço [ntfy.sh](https://ntfy.sh) é gratuito e não pede conta, mas é de terceiros: as mensagens passam por ele e ficam guardadas por umas 12 horas. Quem souber o endereço pode mandar notas para a TV. Se a TV ficar desligada mais de 12 horas, as mensagens desse período se perdem. Dá para desligar em **Configurações → Notas pelo celular**.
 
 Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 
@@ -48,6 +55,7 @@ Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 - **Fonte das manchetes:** g1, CBC News, Radio-Canada ou El País. Por padrão segue o idioma.
 - **Fotos de fundo:** as fotos do dia do Bing das últimas duas semanas, trocadas a cada 2 minutos.
 - **Margem da tela:** para TVs que cortam as bordas.
+- **Notas pelo celular:** ligado ou desligado, com o endereço da sua TV.
 - **Modo noturno:** ligado ou desligado.
 - **Abrir ao ligar a TV.**
 
@@ -64,6 +72,7 @@ A fileira inicial é a lista `APPS`, no início de [`web/tv.js`](web/tv.js). Cad
 
 ```
 web/        A tela (HTML, CSS e JS), que também abre num navegador comum
+web/vendor/ qrcode.js, de Kazuhiko Arase (licença MIT), para o QR code das notas
 android/    App Android que mostra web/ em tela cheia e faz a ponte com a TV
 .github/    Compila o APK e publica uma release a cada push no main
 ```

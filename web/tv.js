@@ -34,6 +34,11 @@ const NIGHT_UNTIL = 7;
 const HOME_EVENTS = 3;                   // events on the home screen; the rest in the full agenda
 const AGENDA_DAYS = 7;
 
+const NTFY = 'https://ntfy.sh/';      // free relay for notes sent from the phone
+const NOTES_POLL = 30 * 1000;
+const SNOOZE = 10 * 60 * 1000;
+const HOME_NOTES = 2;
+
 // Colours for apps added from the installed list, which have no colour of their own.
 const TILE_COLORS = ['#3B3F8F', '#7A2E5C', '#1F6F5C', '#8A4B12', '#2E5E8A', '#5B3A8F', '#7A1C1C', '#28524A'];
 
@@ -67,6 +72,16 @@ const STRINGS = {
     addApp: 'Adicionar', addTitle: 'Adicionar app', addHint: 'Apps instalados nesta TV. OK adiciona ou tira da fileira.',
     inRow: 'Na fileira', done: 'Pronto', position: 'posição {n} de {total}', addOnlyTv: 'A lista de apps só aparece na TV.',
     organizeHow: 'Para chegar aqui: segure OK em qualquer app da tela inicial, ou escolha o bloco + no fim da fileira.',
+    reminders: 'Lembretes', notesKicker: 'Notas e lembretes', newNote: 'Nova nota', newShort: 'Nova',
+    noteWhat: 'O que lembrar?', notePlaceholder: 'Ex.: dentista amanhã 9h', remindWhen: 'Lembrar com aviso na tela',
+    whenNone: 'Sem aviso', whenHalf: 'Em 30 min', whenHour: 'Em 1 hora', whenTonight: 'Hoje, 20:00', whenMorning: 'Amanhã, 8:00',
+    cancel: 'Cancelar', noteDone: 'Feito', snooze: 'Adiar 10 min', reminder: 'Lembrete', fromPhone: 'Nota do celular',
+    deleteNote: 'Apagar nota', notesEmpty: 'Nenhuma nota. Crie uma aqui ou mande do celular.',
+    notesHint: 'OK marca como feita · Direita leva à lixeira · Voltar fecha. As feitas saem da lista no dia seguinte.',
+    phoneTitle: 'Mande notas do celular', phoneNotes: 'Notas pelo celular',
+    phoneHint: 'Aponte a câmera para o código, ou abra o endereço no celular, e mande uma mensagem. Um horário no texto vira aviso: “dentista amanhã 9h”.',
+    phoneNotesHint: 'Usa o serviço gratuito ntfy.sh. Quem souber o endereço pode mandar notas para a TV. Endereço:',
+    tomorrowWords: 'amanhã|amanha', todayWords: 'hoje', atWords: 'às|as|a',
     install: 'Instalar',
     wx: ['Céu limpo', 'Quase limpo', 'Parcialmente nublado', 'Nublado', 'Neblina', 'Garoa', 'Chuva',
          'Chuva congelante', 'Neve', 'Pancadas de chuva', 'Pancadas de neve', 'Tempestade'],
@@ -100,6 +115,16 @@ const STRINGS = {
     addApp: 'Add', addTitle: 'Add an app', addHint: 'Apps installed on this TV. OK adds or removes it from the row.',
     inRow: 'In row', done: 'Done', position: 'position {n} of {total}', addOnlyTv: 'The app list only shows on the TV.',
     organizeHow: 'To get here: hold OK on any app on the home screen, or pick the + tile at the end of the row.',
+    reminders: 'Reminders', notesKicker: 'Notes and reminders', newNote: 'New note', newShort: 'New',
+    noteWhat: 'What to remember?', notePlaceholder: 'E.g. dentist tomorrow 9:00', remindWhen: 'Remind me on screen',
+    whenNone: 'No reminder', whenHalf: 'In 30 min', whenHour: 'In 1 hour', whenTonight: 'Tonight, 8 PM', whenMorning: 'Tomorrow, 8 AM',
+    cancel: 'Cancel', noteDone: 'Done', snooze: 'Snooze 10 min', reminder: 'Reminder', fromPhone: 'Note from your phone',
+    deleteNote: 'Delete note', notesEmpty: 'No notes. Add one here or send one from your phone.',
+    notesHint: 'OK marks it done · Right goes to the bin · Back closes. Done notes leave the list the next day.',
+    phoneTitle: 'Send notes from your phone', phoneNotes: 'Notes from the phone',
+    phoneHint: 'Point the camera at the code, or open the address on your phone, and send a message. A time in the text becomes a reminder: “dentist tomorrow 9:00”.',
+    phoneNotesHint: 'Uses the free ntfy.sh service. Anyone who knows the address can send notes to the TV. Address:',
+    tomorrowWords: 'tomorrow', todayWords: 'today', atWords: 'at',
     install: 'Install',
     wx: ['Clear sky', 'Mostly clear', 'Partly cloudy', 'Overcast', 'Fog', 'Drizzle', 'Rain',
          'Freezing rain', 'Snow', 'Rain showers', 'Snow showers', 'Thunderstorm'],
@@ -133,6 +158,16 @@ const STRINGS = {
     addApp: 'Ajouter', addTitle: 'Ajouter une appli', addHint: 'Applis installées sur cette télé. OK l’ajoute ou la retire de la rangée.',
     inRow: 'Dans la rangée', done: 'Terminé', position: 'position {n} sur {total}', addOnlyTv: 'La liste des applis s’affiche seulement sur la télé.',
     organizeHow: 'Pour venir ici : maintenez OK sur une appli de l’accueil, ou choisissez la tuile + au bout de la rangée.',
+    reminders: 'Rappels', notesKicker: 'Notes et rappels', newNote: 'Nouvelle note', newShort: 'Nouvelle',
+    noteWhat: 'Quoi retenir ?', notePlaceholder: 'Ex. : dentiste demain 9h', remindWhen: 'Me le rappeler à l’écran',
+    whenNone: 'Sans rappel', whenHalf: 'Dans 30 min', whenHour: 'Dans 1 heure', whenTonight: 'Ce soir, 20 h', whenMorning: 'Demain, 8 h',
+    cancel: 'Annuler', noteDone: 'Fait', snooze: 'Reporter 10 min', reminder: 'Rappel', fromPhone: 'Note du téléphone',
+    deleteNote: 'Supprimer la note', notesEmpty: 'Aucune note. Créez-en une ici ou envoyez-la du téléphone.',
+    notesHint: 'OK la marque comme faite · Droite mène à la corbeille · Retour ferme. Les notes faites partent le lendemain.',
+    phoneTitle: 'Envoyez des notes du téléphone', phoneNotes: 'Notes du téléphone',
+    phoneHint: 'Visez le code avec l’appareil photo, ou ouvrez l’adresse sur le téléphone, et envoyez un message. Une heure dans le texte devient un rappel : « dentiste demain 9h ».',
+    phoneNotesHint: 'Utilise le service gratuit ntfy.sh. Toute personne qui connaît l’adresse peut envoyer des notes à la télé. Adresse :',
+    tomorrowWords: 'demain', todayWords: 'aujourd’hui|aujourd\'hui', atWords: 'à|a',
     install: 'Installer',
     wx: ['Ciel dégagé', 'Plutôt dégagé', 'Partiellement nuageux', 'Couvert', 'Brouillard', 'Bruine', 'Pluie',
          'Pluie verglaçante', 'Neige', 'Averses', 'Averses de neige', 'Orage'],
@@ -166,6 +201,16 @@ const STRINGS = {
     addApp: 'Añadir', addTitle: 'Añadir app', addHint: 'Apps instaladas en esta tele. OK la añade o la quita de la fila.',
     inRow: 'En la fila', done: 'Listo', position: 'posición {n} de {total}', addOnlyTv: 'La lista de apps solo aparece en la tele.',
     organizeHow: 'Para llegar aquí: mantén OK en cualquier app de la pantalla de inicio, o elige el bloque + al final de la fila.',
+    reminders: 'Recordatorios', notesKicker: 'Notas y recordatorios', newNote: 'Nueva nota', newShort: 'Nueva',
+    noteWhat: '¿Qué recordar?', notePlaceholder: 'Ej.: dentista mañana 9h', remindWhen: 'Avisarme en pantalla',
+    whenNone: 'Sin aviso', whenHalf: 'En 30 min', whenHour: 'En 1 hora', whenTonight: 'Hoy, 20:00', whenMorning: 'Mañana, 8:00',
+    cancel: 'Cancelar', noteDone: 'Hecho', snooze: 'Posponer 10 min', reminder: 'Recordatorio', fromPhone: 'Nota del móvil',
+    deleteNote: 'Borrar nota', notesEmpty: 'No hay notas. Crea una aquí o mándala desde el móvil.',
+    notesHint: 'OK la marca como hecha · Derecha lleva a la papelera · Atrás cierra. Las hechas salen de la lista al día siguiente.',
+    phoneTitle: 'Manda notas desde el móvil', phoneNotes: 'Notas desde el móvil',
+    phoneHint: 'Apunta la cámara al código, o abre la dirección en el móvil, y manda un mensaje. Una hora en el texto se vuelve aviso: «dentista mañana 9h».',
+    phoneNotesHint: 'Usa el servicio gratuito ntfy.sh. Quien conozca la dirección puede mandar notas a la tele. Dirección:',
+    tomorrowWords: 'mañana|manana', todayWords: 'hoy', atWords: 'a las|a',
     install: 'Instalar',
     wx: ['Despejado', 'Mayormente despejado', 'Parcialmente nublado', 'Nublado', 'Niebla', 'Llovizna', 'Lluvia',
          'Lluvia helada', 'Nieve', 'Chubascos', 'Chubascos de nieve', 'Tormenta'],
@@ -197,6 +242,7 @@ const prefs = {
   margin: store.get('margin', 0),
   night: store.get('night', true),
   apps: store.get('apps', null), // row order as app names or 'pkg:<package>'; null = APPS
+  phoneNotes: store.get('phoneNotes', true),
 };
 
 const t = (key) => STRINGS[prefs.lang][key];
@@ -812,6 +858,310 @@ $('add-grid').addEventListener('click', (e) => {
 });
 $('add-back').addEventListener('click', () => { renderEditor(); openView('apps', $('add-app')); });
 
+// ---------- Notes and reminders ----------
+
+// [{ id, text, at (ms or null), done, doneAt, alerted, from: 'tv' | 'phone', created }]
+let notes = store.get('notes', []);
+
+function saveNotes() {
+  store.set('notes', notes);
+  renderNoteChips();
+  if (view === 'notes') renderNotesView();
+}
+
+// Done notes stay visible, struck through, until the day after.
+function pruneNotes() {
+  const today = startOfDay(new Date()).getTime();
+  const kept = notes.filter((n) => !n.done || n.doneAt >= today);
+  if (kept.length !== notes.length) { notes = kept; saveNotes(); }
+}
+
+function pendingNotes() {
+  return notes.filter((n) => !n.done).sort((a, b) => {
+    if (a.at && b.at) return a.at - b.at;
+    if (a.at || b.at) return a.at ? -1 : 1;
+    return b.created - a.created;
+  });
+}
+
+// "19:00" today, "Amanhã, 8:00" or "Seg., 9:00" otherwise.
+function noteTime(at) {
+  const d = new Date(at);
+  return d < addDays(startOfDay(new Date()), 1) ? formatTime(d) : shortDay(d) + ', ' + formatTime(d);
+}
+
+// Pulls a time out of the text, so "dentista amanhã 9h" becomes "dentista" at 9:00 tomorrow.
+function parseNote(raw) {
+  let text = ' ' + raw + ' ';
+  const words = Object.keys(STRINGS).map((k) => STRINGS[k]);
+  const any = (key) => words.map((w) => w[key]).join('|');
+  let tomorrow = false;
+  const dayRe = new RegExp(`\\s(${any('tomorrowWords')})(?=[\\s.,!])`, 'i');
+  if (dayRe.test(text)) { tomorrow = true; text = text.replace(dayRe, ' '); }
+  text = text.replace(new RegExp(`\\s(${any('todayWords')})(?=[\\s.,!])`, 'i'), ' ');
+
+  let at = null;
+  const timeRe = new RegExp(`\\s(?:(?:${any('atWords')})\\s+)?([01]?\\d|2[0-3])(?::([0-5]\\d)|h([0-5]\\d)?)(?=[\\s.,!])`, 'i');
+  const m = text.match(timeRe);
+  if (m) {
+    text = text.replace(timeRe, ' ');
+    const now = new Date();
+    let d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), +m[1], +(m[2] || m[3] || 0));
+    if (tomorrow) d = addDays(d, 1);
+    else if (d <= now) d = addDays(d, 1);
+    d.setHours(+m[1], +(m[2] || m[3] || 0));
+    at = d.getTime();
+  } else if (tomorrow) {
+    const d = addDays(startOfDay(new Date()), 1);
+    d.setHours(9, 0);
+    at = d.getTime();
+  }
+  text = text.replace(/\s+/g, ' ').replace(/^[\s,.-]+|[\s,.-]+$/g, '');
+  return { text: text || raw.trim(), at };
+}
+
+function addNote(raw, at, from) {
+  const parsed = parseNote(raw);
+  const note = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    text: parsed.text, at: at !== undefined ? at : parsed.at,
+    done: false, doneAt: 0, alerted: false, from, created: Date.now(),
+  };
+  notes.push(note);
+  saveNotes();
+  return note;
+}
+
+function setDone(id, done) {
+  const n = notes.find((x) => x.id === id);
+  if (!n) return;
+  n.done = done;
+  n.doneAt = done ? Date.now() : 0;
+  saveNotes();
+}
+
+const BELL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z"/><path d="M10 21h4"/></svg>';
+const PHONE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>';
+
+// The home screen shows the next few as chips under the agenda.
+function renderNoteChips() {
+  const list = pendingNotes();
+  const shown = list.slice(0, HOME_NOTES);
+  $('note-chips').innerHTML = shown.map((n) =>
+    `<button class="chip${n.at ? ' timed' : ''}" data-nav data-chip="${n.id}">`
+    + (n.at ? BELL : '') + `<span class="chip-text">${escapeHtml(n.text)}</span>`
+    + (n.at ? `<b>${escapeHtml(noteTime(n.at))}</b>` : '') + '</button>').join('')
+    + (list.length > shown.length ? `<button class="chip" data-nav data-chip="more">+${list.length - shown.length}</button>` : '')
+    + `<button class="chip add" data-nav data-chip="new">${PLUS}<span>${escapeHtml(t('newShort'))}</span></button>`;
+}
+
+function openNotes(focusId) {
+  pruneNotes();
+  renderNotesView();
+  const row = focusId && $('notes-list').querySelector(`[data-note="${focusId}"]`);
+  openView('notes', row || $('notes-list').querySelector('[data-note]') || $('notes-new'));
+}
+
+function renderNotesView() {
+  const list = pendingNotes().concat(notes.filter((n) => n.done));
+  $('notes-list').innerHTML = list.map((n) =>
+    `<div class="note-row${n.done ? ' done' : ''}" data-nav tabindex="-1" data-note="${n.id}">`
+    + `<span class="check">${n.done ? CHECK : ''}</span>`
+    + `<span class="note-text">${escapeHtml(n.text)}</span>`
+    + (n.from === 'phone' ? `<span class="from">${PHONE}</span>` : '')
+    + (n.at && !n.done ? `<span class="when">${BELL}${escapeHtml(noteTime(n.at))}</span>` : '')
+    + `<button class="note-del" data-nav data-del="${n.id}" aria-label="${escapeHtml(t('deleteNote'))}">${TRASH}</button>`
+    + '</div>').join('') || `<p class="note">${escapeHtml(t('notesEmpty'))}</p>`;
+  renderPhonePanel();
+}
+
+function phoneAddress() {
+  return 'ntfy.sh/' + ntfyTopic();
+}
+
+function renderPhonePanel() {
+  $('phone-panel').hidden = !prefs.phoneNotes;
+  if (!prefs.phoneNotes) return;
+  $('phone-address').textContent = phoneAddress();
+  if (typeof qrcode === 'function' && !$('phone-qr').dataset.topic) {
+    const qr = qrcode(0, 'M');
+    qr.addData(NTFY + ntfyTopic());
+    qr.make();
+    $('phone-qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+    $('phone-qr').dataset.topic = ntfyTopic();
+  }
+}
+
+$('note-chips').addEventListener('click', (e) => {
+  const chip = e.target.closest('[data-chip]');
+  if (!chip) return;
+  if (chip.dataset.chip === 'new') openNewNote('home');
+  else openNotes(chip.dataset.chip === 'more' ? null : chip.dataset.chip);
+});
+
+$('notes-list').addEventListener('click', (e) => {
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    const rows = [...$('notes-list').querySelectorAll('[data-note]')];
+    const i = rows.findIndex((r) => r.dataset.note === del.dataset.del);
+    notes = notes.filter((n) => n.id !== del.dataset.del);
+    saveNotes();
+    const left = $('notes-list').querySelectorAll('[data-note]');
+    focus(left[Math.min(i, left.length - 1)] || $('notes-new'));
+    return;
+  }
+  const row = e.target.closest('[data-note]');
+  if (!row) return;
+  const n = notes.find((x) => x.id === row.dataset.note);
+  if (n) setDone(n.id, !n.done);
+  focus($('notes-list').querySelector(`[data-note="${row.dataset.note}"]`));
+});
+
+$('notes-new').addEventListener('click', () => openNewNote('notes'));
+$('notes-back').addEventListener('click', () => closeView());
+
+// ---------- New note ----------
+
+const WHENS = ['none', 'half', 'hour', 'tonight', 'morning'];
+let noteWhen = 'none';
+let noteFrom = 'home';
+
+function whenAt(key) {
+  const now = new Date();
+  if (key === 'half') return now.getTime() + 30 * 60 * 1000;
+  if (key === 'hour') return now.getTime() + 60 * 60 * 1000;
+  if (key === 'tonight') {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 0);
+    return (d > now ? d : addDays(d, 1)).getTime();
+  }
+  if (key === 'morning') return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 8, 0).getTime();
+  return undefined; // no choice: take a time typed in the text, if any
+}
+
+function renderWhens() {
+  const label = { none: 'whenNone', half: 'whenHalf', hour: 'whenHour', tonight: 'whenTonight', morning: 'whenMorning' };
+  $('note-when').innerHTML = WHENS.map((k) =>
+    `<button type="button" data-nav data-when="${k}" ${pressed(k === noteWhen)}>${escapeHtml(t(label[k]))}</button>`).join('');
+}
+
+function openNewNote(from) {
+  noteFrom = from;
+  noteWhen = 'none';
+  $('note-input').value = '';
+  renderWhens();
+  openView('note-new', $('note-input'));
+}
+
+function leaveNewNote(saved) {
+  if (noteFrom === 'notes' || saved) openNotes(saved && saved.id);
+  else closeView();
+}
+
+$('note-when').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-when]');
+  if (!btn) return;
+  noteWhen = btn.dataset.when;
+  renderWhens();
+  focus($('note-when').querySelector(`[data-when="${noteWhen}"]`));
+});
+
+$('note-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const raw = $('note-input').value.trim();
+  $('note-input').blur();
+  if (!raw) { focus($('note-input')); return; }
+  leaveNewNote(addNote(raw, whenAt(noteWhen), 'tv'));
+});
+$('note-cancel').addEventListener('click', () => leaveNewNote(null));
+
+// ---------- Reminder alert ----------
+
+let alertNote = null;
+let alertReturn = null;
+
+function checkAlerts() {
+  if (alertNote) return;
+  const now = Date.now();
+  const due = pendingNotes().find((n) => n.at && n.at <= now && !n.alerted);
+  if (!due) return;
+  noteActivity(); // wake the screensaver: this is worth seeing
+  alertNote = due;
+  alertReturn = current;
+  $('alert-kicker').textContent = `${t('reminder')} · ${formatTime(new Date(due.at))}`;
+  $('alert-title').textContent = due.text;
+  $('alert-snooze').hidden = false;
+  $('alert').hidden = false;
+  focus($('alert-done'));
+}
+
+function closeAlert() {
+  if (!alertNote) return;
+  alertNote = null;
+  $('alert').hidden = true;
+  focus(alertReturn && document.body.contains(alertReturn) ? alertReturn : document.querySelector('#app-row .app'));
+  setTimeout(checkAlerts, 500); // another one may be due
+}
+
+$('alert-done').addEventListener('click', () => {
+  const id = alertNote && alertNote.id;
+  closeAlert();
+  if (id) setDone(id, true);
+});
+$('alert-snooze').addEventListener('click', () => {
+  if (alertNote) { alertNote.at = Date.now() + SNOOZE; saveNotes(); }
+  closeAlert();
+});
+
+// A short banner for notes that arrive from the phone without a time.
+let toastTimer = null;
+function toast(text) {
+  $('toast').innerHTML = `${PHONE}<span><b>${escapeHtml(t('fromPhone'))}</b> · ${escapeHtml(text)}</span>`;
+  $('toast').hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { $('toast').hidden = true; }, 12000);
+}
+
+// ---------- Notes from the phone (ntfy.sh) ----------
+
+function ntfyTopic() {
+  let topic = store.get('ntfyTopic', '');
+  if (!topic) {
+    const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+    const bytes = new Uint8Array(8);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    topic = 'claudetv-' + [...bytes].map((b) => chars[b % chars.length]).join('');
+    store.set('ntfyTopic', topic);
+  }
+  return topic;
+}
+
+// ntfy.sh keeps messages for about 12 hours; ask for everything since the last one seen.
+async function pollPhone() {
+  if (!prefs.phoneNotes) return;
+  const since = store.get('ntfySince', '12h');
+  let text;
+  try {
+    text = await fetchText(`${NTFY}${ntfyTopic()}/json?poll=1&since=${encodeURIComponent(since)}`);
+  } catch (e) {
+    return; // offline; try again next time
+  }
+  let last = null;
+  text.split('\n').forEach((line) => {
+    if (!line.trim()) return;
+    let msg;
+    try { msg = JSON.parse(line); } catch (e) { return; }
+    if (msg.event !== 'message' || !msg.message) return;
+    last = msg.id;
+    const body = msg.title ? `${msg.title}: ${msg.message}` : msg.message;
+    const note = addNote(body, undefined, 'phone');
+    if (!note.at) toast(note.text);
+  });
+  if (last) store.set('ntfySince', last);
+  checkAlerts();
+}
+
 // ---------- Settings ----------
 
 const pressed = (on) => `aria-pressed="${on}"`;
@@ -832,6 +1182,10 @@ function renderChoices() {
     const label = key === 'auto' ? t('newsAuto') : key === 'off' ? t('off') : NEWS[key].label;
     return `<button data-nav data-news="${key}" ${pressed(key === prefs.news)}>${label}</button>`;
   }).join('');
+  $('phone-choices').innerHTML = [true, false].map((on) =>
+    `<button data-nav data-phone="${on}" ${pressed(on === prefs.phoneNotes)}>${on ? t('on') : t('off')}</button>`
+  ).join('');
+  $('settings-phone-address').textContent = phoneAddress();
   $('night-choices').innerHTML = [true, false].map((on) =>
     `<button data-nav data-night="${on}" ${pressed(on === prefs.night)}>${on ? t('on') : t('off')}</button>`
   ).join('');
@@ -856,6 +1210,7 @@ function applyLanguage() {
   renderWeather();
   renderAgenda();
   renderApps();
+  renderNoteChips();
 }
 
 function openSettings() {
@@ -900,6 +1255,11 @@ $('settings').addEventListener('click', (e) => {
     renderClock();
     renderAgenda();
     selector = `[data-hour12="${d.hour12}"]`;
+  } else if (d.phone) {
+    prefs.phoneNotes = d.phone === 'true';
+    store.set('phoneNotes', prefs.phoneNotes);
+    pollPhone();
+    selector = `[data-phone="${d.phone}"]`;
   } else if (d.night) {
     prefs.night = d.night === 'true';
     store.set('night', prefs.night);
@@ -990,7 +1350,7 @@ let homeFocus = null;
 
 function openView(name, target) {
   if (!view) homeFocus = current;
-  ['agenda', 'apps', 'add'].forEach((v) => { $(v + '-view').hidden = v !== name; });
+  ['agenda', 'apps', 'add', 'notes', 'note-new'].forEach((v) => { $(v + '-view').hidden = v !== name; });
   view = name;
   document.body.classList.add('in-view');
   $(name + '-view').scrollTop = 0;
@@ -1023,6 +1383,7 @@ function focus(el) {
 }
 
 function activeScope() {
+  if (alertNote) return $('alert');
   if (!$('settings').hidden) return $('settings');
   return view ? $(view + '-view') : $('home');
 }
@@ -1136,14 +1497,16 @@ function renderSaver() {
 // Back and Menu; Back returns whether it was used.
 window.tvBack = () => {
   if (noteActivity()) return true;
+  if (alertNote) { alertNote.alerted = true; saveNotes(); closeAlert(); return true; }
   if (!$('settings').hidden) { closeSettings(); return true; }
+  if (view === 'note-new') { leaveNewNote(null); return true; }
   if (view === 'add') { renderEditor(); openView('apps', $('add-app')); return true; }
   if (view) { closeView(); return true; }
   return false;
 };
 window.tvMenu = () => {
   if (noteActivity()) return;
-  if (view) return;
+  if (view || alertNote) return;
   if ($('settings').hidden) openSettings(); else closeSettings();
 };
 window.tvResume = () => {
@@ -1153,6 +1516,8 @@ window.tvResume = () => {
   applyNight();
   renderApps();
   if (view === 'apps') renderEditor();
+  pollPhone();
+  checkAlerts();
   if (current && current.dataset.app) focus($('app-row').querySelector(`[data-app="${current.dataset.app}"]`));
 };
 
@@ -1221,6 +1586,13 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && current && current.tagName === 'INPUT' && !typing) {
     e.preventDefault();
     current.focus();
+    return;
+  }
+
+  // Rows that aren't buttons (notes, agenda events) still react to OK.
+  if (e.key === 'Enter' && current && current.tagName === 'DIV') {
+    e.preventDefault();
+    current.click();
   }
 });
 
@@ -1242,6 +1614,13 @@ loadNews();
 loadPhotos();
 applyNight();
 noteActivity();
+pruneNotes();
+renderNoteChips();
+pollPhone();
+checkAlerts();
+setInterval(pollPhone, NOTES_POLL);
+setInterval(() => { checkAlerts(); renderNoteChips(); }, 15 * 1000);
+setInterval(pruneNotes, 60 * 60 * 1000);
 setInterval(loadWeather, 15 * 60 * 1000);
 setInterval(loadCalendar, 10 * 60 * 1000);
 setInterval(loadNews, 30 * 60 * 1000);
