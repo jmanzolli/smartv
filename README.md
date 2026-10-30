@@ -36,7 +36,7 @@ Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 - **Cidade do clima:** Montréal por padrão.
 - **Agenda:** cole o *endereço secreto no formato iCal* do Google Agenda. Ele fica em **Configurações → (sua agenda) → Integrar agenda**, no computador. Para colar com facilidade, use o teclado do app **Amazon Fire TV** no celular.
 - **Fonte das manchetes:** g1, CBC News, Radio-Canada ou El País. Por padrão segue o idioma.
-- **Fotos de fundo:** a foto do dia do Bing, trocada a cada 5 minutos.
+- **Fotos de fundo:** as fotos do dia do Bing das últimas duas semanas, trocadas a cada 2 minutos.
 - **Abrir ao ligar a TV.**
 
 ## Limites do Fire OS

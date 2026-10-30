@@ -26,7 +26,7 @@ const NEWS = {
 };
 const NEWS_FOR_LANG = { pt: 'g1', en: 'cbc', fr: 'rc', es: 'elpais' };
 
-const PHOTO_EVERY = 5 * 60 * 1000;
+const PHOTO_EVERY = 2 * 60 * 1000;
 
 const STRINGS = {
   pt: {
@@ -430,16 +430,17 @@ async function loadPhotos() {
     $('photo-credit').textContent = '';
     return;
   }
-  try {
-    const data = JSON.parse(await fetchText(
-      `https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=${t('bing')}`));
-    photos = (data.images || []).map((img) => ({
+  // Bing serves at most 8 photos per request and keeps about 15 days, so ask for both halves.
+  const pages = await Promise.all([0, 7].map((idx) =>
+    fetchText(`https://www.bing.com/HPImageArchive.aspx?format=js&idx=${idx}&n=8&mkt=${t('bing')}`)
+      .then((text) => JSON.parse(text).images || [], () => [])));
+  const seen = new Set();
+  photos = [].concat(...pages)
+    .filter((img) => img.urlbase && !seen.has(img.urlbase) && seen.add(img.urlbase))
+    .map((img) => ({
       url: 'https://www.bing.com' + img.urlbase + '_1920x1080.jpg',
       credit: img.copyright || '',
     }));
-  } catch (e) {
-    photos = [];
-  }
   if (!photos.length) return; // keep the sky
   photoIndex = 0;
   showPhoto();
