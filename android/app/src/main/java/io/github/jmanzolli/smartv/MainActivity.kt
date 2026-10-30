@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.view.KeyEvent
+import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -218,6 +219,15 @@ class MainActivity : Activity() {
                 } catch (e: Exception) {
                     resolve(id, false, e.toString())
                 }
+            }
+        }
+
+        /** The page keeps the screen on while its own screensaver runs, then hands back to the TV's. */
+        @JavascriptInterface
+        fun setKeepScreenOn(on: Boolean) {
+            runOnUiThread {
+                val flag = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                if (on) window.addFlags(flag) else window.clearFlags(flag)
             }
         }
 

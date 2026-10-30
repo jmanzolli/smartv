@@ -27,6 +27,15 @@ const NEWS = {
 const NEWS_FOR_LANG = { pt: 'g1', en: 'cbc', fr: 'rc', es: 'elpais' };
 
 const PHOTO_EVERY = 2 * 60 * 1000;
+const SAVER_AFTER = 5 * 60 * 1000;       // idle time before the screensaver
+const SAVER_RELEASE = 60 * 60 * 1000;    // then let the TV's own sleep take over
+const NIGHT_FROM = 22;                   // night mode hours
+const NIGHT_UNTIL = 7;
+const HOME_EVENTS = 3;                   // events on the home screen; the rest in the full agenda
+const AGENDA_DAYS = 7;
+
+// Colours for apps added from the installed list, which have no colour of their own.
+const TILE_COLORS = ['#3B3F8F', '#7A2E5C', '#1F6F5C', '#8A4B12', '#2E5E8A', '#5B3A8F', '#7A1C1C', '#28524A'];
 
 const STRINGS = {
   pt: {
@@ -49,6 +58,15 @@ const STRINGS = {
     newsError: 'Sem manchetes agora. Nova tentativa em alguns minutos.',
     margin: 'Margem da tela', marginHint: 'Se as bordas ficarem cortadas na TV, aumente a margem.',
     photos: 'Fotos de fundo', autostart: 'Abrir ao ligar a TV', on: 'Ligado', off: 'Desligado',
+    feels: 'Sensação de', fullAgenda: 'Ver agenda completa', nextDays: 'Próximos 7 dias', until: 'até',
+    back: 'Voltar', agendaHint: 'Setas para percorrer · Voltar para fechar',
+    nightBadge: 'Modo noturno até 7:00', nightMode: 'Modo noturno',
+    nightHint: 'Das 22:00 às 7:00 a tela escurece e as manchetes somem.',
+    organize: 'Organizar apps', organizeHint: 'Escolha um app e use os botões para mudar de lugar.',
+    moveLeft: 'Mover para a esquerda', moveRight: 'Mover para a direita', removeApp: 'Remover da fileira',
+    addApp: 'Adicionar', addTitle: 'Adicionar app', addHint: 'Apps instalados nesta TV. OK adiciona ou tira da fileira.',
+    inRow: 'Na fileira', done: 'Pronto', position: 'posição {n} de {total}', addOnlyTv: 'A lista de apps só aparece na TV.',
+    organizeHow: 'Para chegar aqui: segure OK em qualquer app da tela inicial, ou escolha o bloco + no fim da fileira.',
     install: 'Instalar',
     wx: ['Céu limpo', 'Quase limpo', 'Parcialmente nublado', 'Nublado', 'Neblina', 'Garoa', 'Chuva',
          'Chuva congelante', 'Neve', 'Pancadas de chuva', 'Pancadas de neve', 'Tempestade'],
@@ -73,6 +91,15 @@ const STRINGS = {
     newsError: 'No headlines right now. Trying again in a few minutes.',
     margin: 'Screen margin', marginHint: 'If the edges are cut off on the TV, increase the margin.',
     photos: 'Background photos', autostart: 'Open when the TV turns on', on: 'On', off: 'Off',
+    feels: 'Feels like', fullAgenda: 'See full calendar', nextDays: 'Next 7 days', until: 'until',
+    back: 'Back', agendaHint: 'Arrows to browse · Back to close',
+    nightBadge: 'Night mode until 7:00', nightMode: 'Night mode',
+    nightHint: 'From 10 PM to 7 AM the screen dims and headlines are hidden.',
+    organize: 'Arrange apps', organizeHint: 'Pick an app and use the buttons to move it.',
+    moveLeft: 'Move left', moveRight: 'Move right', removeApp: 'Remove from row',
+    addApp: 'Add', addTitle: 'Add an app', addHint: 'Apps installed on this TV. OK adds or removes it from the row.',
+    inRow: 'In row', done: 'Done', position: 'position {n} of {total}', addOnlyTv: 'The app list only shows on the TV.',
+    organizeHow: 'To get here: hold OK on any app on the home screen, or pick the + tile at the end of the row.',
     install: 'Install',
     wx: ['Clear sky', 'Mostly clear', 'Partly cloudy', 'Overcast', 'Fog', 'Drizzle', 'Rain',
          'Freezing rain', 'Snow', 'Rain showers', 'Snow showers', 'Thunderstorm'],
@@ -97,6 +124,15 @@ const STRINGS = {
     newsError: 'Pas de manchettes pour l’instant. Nouvel essai dans quelques minutes.',
     margin: "Marge de l'écran", marginHint: 'Si les bords sont coupés sur la télé, augmentez la marge.',
     photos: 'Photos en arrière-plan', autostart: 'Ouvrir au démarrage de la télé', on: 'Activé', off: 'Désactivé',
+    feels: 'Ressenti', fullAgenda: 'Voir tout l’agenda', nextDays: '7 prochains jours', until: 'jusqu’à',
+    back: 'Retour', agendaHint: 'Flèches pour parcourir · Retour pour fermer',
+    nightBadge: 'Mode nuit jusqu’à 7 h', nightMode: 'Mode nuit',
+    nightHint: 'De 22 h à 7 h, l’écran s’assombrit et les manchettes disparaissent.',
+    organize: 'Organiser les applis', organizeHint: 'Choisissez une appli et déplacez-la avec les boutons.',
+    moveLeft: 'Déplacer à gauche', moveRight: 'Déplacer à droite', removeApp: 'Retirer de la rangée',
+    addApp: 'Ajouter', addTitle: 'Ajouter une appli', addHint: 'Applis installées sur cette télé. OK l’ajoute ou la retire de la rangée.',
+    inRow: 'Dans la rangée', done: 'Terminé', position: 'position {n} sur {total}', addOnlyTv: 'La liste des applis s’affiche seulement sur la télé.',
+    organizeHow: 'Pour venir ici : maintenez OK sur une appli de l’accueil, ou choisissez la tuile + au bout de la rangée.',
     install: 'Installer',
     wx: ['Ciel dégagé', 'Plutôt dégagé', 'Partiellement nuageux', 'Couvert', 'Brouillard', 'Bruine', 'Pluie',
          'Pluie verglaçante', 'Neige', 'Averses', 'Averses de neige', 'Orage'],
@@ -121,6 +157,15 @@ const STRINGS = {
     newsError: 'Sin titulares ahora. Nuevo intento en unos minutos.',
     margin: 'Margen de la pantalla', marginHint: 'Si los bordes se ven cortados en la tele, aumenta el margen.',
     photos: 'Fotos de fondo', autostart: 'Abrir al encender la tele', on: 'Activado', off: 'Desactivado',
+    feels: 'Sensación de', fullAgenda: 'Ver agenda completa', nextDays: 'Próximos 7 días', until: 'hasta',
+    back: 'Volver', agendaHint: 'Flechas para recorrer · Atrás para cerrar',
+    nightBadge: 'Modo nocturno hasta las 7:00', nightMode: 'Modo nocturno',
+    nightHint: 'De 22:00 a 7:00 la pantalla se oscurece y los titulares desaparecen.',
+    organize: 'Ordenar apps', organizeHint: 'Elige una app y usa los botones para moverla.',
+    moveLeft: 'Mover a la izquierda', moveRight: 'Mover a la derecha', removeApp: 'Quitar de la fila',
+    addApp: 'Añadir', addTitle: 'Añadir app', addHint: 'Apps instaladas en esta tele. OK la añade o la quita de la fila.',
+    inRow: 'En la fila', done: 'Listo', position: 'posición {n} de {total}', addOnlyTv: 'La lista de apps solo aparece en la tele.',
+    organizeHow: 'Para llegar aquí: mantén OK en cualquier app de la pantalla de inicio, o elige el bloque + al final de la fila.',
     install: 'Instalar',
     wx: ['Despejado', 'Mayormente despejado', 'Parcialmente nublado', 'Nublado', 'Niebla', 'Llovizna', 'Lluvia',
          'Lluvia helada', 'Nieve', 'Chubascos', 'Chubascos de nieve', 'Tormenta'],
@@ -150,6 +195,8 @@ const prefs = {
   news: store.get('news', 'auto'),
   photos: store.get('photos', true),
   margin: store.get('margin', 0),
+  night: store.get('night', true),
+  apps: store.get('apps', null), // row order as app names or 'pkg:<package>'; null = APPS
 };
 
 const t = (key) => STRINGS[prefs.lang][key];
@@ -243,6 +290,16 @@ function renderClock() {
 function everyMinute() {
   renderClock();
   renderAgenda();
+  applyNight();
+  if (saverOn) renderSaver();
+}
+
+// ---------- Night mode (dims the screen and hides the headlines) ----------
+
+function applyNight() {
+  const h = new Date().getHours();
+  const on = prefs.night && (h >= NIGHT_FROM || h < NIGHT_UNTIL);
+  document.body.classList.toggle('night', on);
 }
 
 function startClock() {
@@ -289,7 +346,7 @@ async function loadWeather() {
   const { lat, lon } = prefs.city;
   const url = 'https://api.open-meteo.com/v1/forecast'
     + `?latitude=${lat}&longitude=${lon}`
-    + '&current=temperature_2m,weather_code,is_day'
+    + '&current=temperature_2m,apparent_temperature,weather_code,is_day'
     + '&daily=weather_code,temperature_2m_max,temperature_2m_min'
     + '&timezone=auto&forecast_days=4';
   try {
@@ -306,6 +363,7 @@ function renderWeather() {
     $('weather-icon').innerHTML = '';
     $('weather-temp').textContent = '';
     $('weather-desc').textContent = t('weatherError');
+    $('weather-feels').textContent = '';
     $('forecast').innerHTML = '';
     document.body.classList.remove('overcast');
     return;
@@ -316,6 +374,8 @@ function renderWeather() {
   $('weather-icon').innerHTML = svg(icon);
   $('weather-temp').textContent = Math.round(cur.temperature_2m) + '°';
   $('weather-desc').textContent = t('wx')[wx];
+  $('weather-feels').innerHTML = typeof cur.apparent_temperature === 'number'
+    ? `${t('feels')} <b>${Math.round(cur.apparent_temperature)}°</b>` : '';
   document.body.classList.toggle('overcast', cur.weather_code >= 3);
 
   const d = lastWeather.daily;
@@ -351,48 +411,124 @@ async function loadCalendar() {
   return !calendarFailed;
 }
 
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Events from now through the next AGENDA_DAYS days.
+function upcoming() {
+  const now = new Date();
+  return Calendar.between(calendarEvents, now, addDays(startOfDay(now), AGENDA_DAYS));
+}
+
+// "Hoje", "Amanhã" or a short weekday ("Dom.").
+function shortDay(date) {
+  const today = startOfDay(new Date());
+  if (date < addDays(today, 1)) return t('today');
+  if (date < addDays(today, 2)) return t('tomorrow');
+  return capitalize(date.toLocaleDateString(t('locale'), { weekday: 'short' }));
+}
+
+function eventWhen(ev) {
+  const now = new Date();
+  if (!ev.allDay && ev.start <= now && ev.end > now) return t('now');
+  return shortDay(ev.start) + ', ' + (ev.allDay ? t('allDay').toLowerCase() : formatTime(ev.start));
+}
+
 function renderAgenda() {
   const list = $('agenda-list');
   const note = $('agenda-note');
+  const more = $('agenda-more');
   list.innerHTML = '';
   note.textContent = '';
+  more.hidden = true;
 
   if (!prefs.calendarUrl) { note.textContent = t('agendaConnect'); return; }
   if (calendarFailed) { note.textContent = t('agendaError'); return; }
   if (!calendarEvents) return;
 
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const tomorrow = new Date(today.getTime() + 86400000);
-  const dayAfter = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-  const items = Calendar.between(calendarEvents, now, dayAfter).slice(0, 5);
-
+  const all = upcoming();
+  const items = all.slice(0, HOME_EVENTS);
   if (!items.length) { note.textContent = t('agendaEmpty'); return; }
 
   list.innerHTML = items.map((ev) => {
-    const day = ev.start < tomorrow ? t('today') : t('tomorrow');
     const happening = !ev.allDay && ev.start <= now && ev.end > now;
-    let when = day + ', ' + (ev.allDay ? t('allDay').toLowerCase() : formatTime(ev.start));
-    if (happening) when = t('now');
-    return `<li${happening ? ' class="is-now"' : ''}><span class="when">${escapeHtml(when)}</span>`
+    return `<li${happening ? ' class="is-now"' : ''}><span class="when">${escapeHtml(eventWhen(ev))}</span>`
       + `<span class="what">${escapeHtml(ev.title)}</span></li>`;
   }).join('');
+
+  const extra = all.length - items.length;
+  more.innerHTML = escapeHtml(t('fullAgenda')) + (extra > 0 ? ` <span>+${extra}</span>` : '');
+  more.hidden = false;
+  if (view === 'agenda') renderAgendaView();
 }
+
+// The full agenda: the next days, grouped by day.
+function renderAgendaView() {
+  const box = $('agenda-days');
+  const all = calendarEvents ? upcoming() : [];
+  const today = startOfDay(new Date());
+  const groups = [];
+  all.forEach((ev) => {
+    const day = ev.start < today ? today : startOfDay(ev.start);
+    let g = groups[groups.length - 1];
+    if (!g || g.day.getTime() !== day.getTime()) groups.push(g = { day, events: [] });
+    g.events.push(ev);
+  });
+
+  box.innerHTML = groups.map((g) => {
+    const date = g.day.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' });
+    const offset = Math.round((g.day - today) / 86400000);
+    const title = offset === 0 ? `${t('today')} · ${date}` : offset === 1 ? `${t('tomorrow')} · ${date}` : capitalize(date);
+    return `<section class="day"><h2>${escapeHtml(title)}</h2>` + g.events.map((ev) => {
+      const time = ev.allDay ? t('allDay') : formatTime(ev.start);
+      const details = [];
+      if (!ev.allDay && ev.end - ev.start > 0) details.push(`${t('until')} ${formatTime(ev.end)}`);
+      if (ev.location) details.push(ev.location);
+      return `<div class="ev" data-nav tabindex="-1"><span class="when">${escapeHtml(time)}</span><div>`
+        + `<p class="what">${escapeHtml(ev.title)}</p>`
+        + (details.length ? `<p class="details">${escapeHtml(details.join(' · '))}</p>` : '')
+        + '</div></div>';
+    }).join('') + '</section>';
+  }).join('') || `<p class="note">${escapeHtml(t('agendaEmpty'))}</p>`;
+}
+
+$('agenda-more').addEventListener('click', () => {
+  renderAgendaView();
+  openView('agenda', $('agenda-days').querySelector('.ev') || $('agenda-back'));
+});
+$('agenda-back').addEventListener('click', () => closeView());
 
 // ---------- Headlines (RSS) ----------
 
+function newsKey() {
+  return NEWS[prefs.news] ? prefs.news : NEWS_FOR_LANG[prefs.lang];
+}
+
 function newsSource() {
   if (prefs.news === 'off') return null;
-  return NEWS[prefs.news] || NEWS[NEWS_FOR_LANG[prefs.lang]];
+  return NEWS[newsKey()];
+}
+
+// Left/right on the switcher next to "Headlines" changes the source and remembers it.
+function cycleNews(step) {
+  const keys = Object.keys(NEWS);
+  const i = keys.indexOf(newsKey());
+  prefs.news = keys[(i + step + keys.length) % keys.length];
+  store.set('news', prefs.news);
+  loadNews();
 }
 
 async function loadNews() {
   const source = newsSource();
-  const section = $('news-list').parentElement;
+  const section = $('news-list').closest('section');
   section.hidden = !source;
   if (!source) return;
 
-  $('news-title').innerHTML = `${t('news')} <span class="source">${escapeHtml(source.label)}</span>`;
+  const keys = Object.keys(NEWS);
+  $('news-source').textContent = source.label;
+  $('news-dots').innerHTML = keys.map((k) => `<i${k === newsKey() ? ' class="on"' : ''}></i>`).join('');
   $('news-note').textContent = '';
   try {
     const xml = new DOMParser().parseFromString(await fetchText(source.url), 'application/xml');
@@ -461,6 +597,7 @@ function showPhoto() {
     photoLayer = next;
     document.body.classList.add('has-photo');
     $('photo-credit').textContent = photo.credit;
+    $('saver-credit').textContent = photo.credit;
   };
   img.src = photo.url;
 }
@@ -494,31 +631,186 @@ function artFor(pkg) {
   return art[pkg];
 }
 
+function colorFor(pkg) {
+  let h = 0;
+  for (const c of pkg) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return TILE_COLORS[h % TILE_COLORS.length];
+}
+
+// The row as the viewer arranged it. Apps added from the installed list are stored as 'pkg:<package>'.
+function rowIds() {
+  return prefs.apps || APPS.map((a) => a.name);
+}
+
+function appFor(id) {
+  if (id.indexOf('pkg:') === 0) {
+    const pkg = id.slice(4);
+    const found = installed && installed.find((a) => a.pkg === pkg);
+    if (installed && !found) return null; // uninstalled since; skip it
+    return { id, name: found ? found.label : pkg, color: colorFor(pkg), packages: [pkg] };
+  }
+  const app = APPS.find((a) => a.name === id);
+  return app ? Object.assign({ id }, app) : null;
+}
+
+function rowApps() {
+  return rowIds().map(appFor).filter(Boolean);
+}
+
+function saveRow(apps) {
+  prefs.apps = apps.map((a) => a.id);
+  store.set('apps', prefs.apps);
+  renderApps();
+}
+
+function tileHtml(app, attrs) {
+  const pkg = packageFor(app);
+  const look = pkg ? artFor(pkg) : {};
+  const name = escapeHtml(app.name);
+  const open = `<button class="app${look.banner ? ' has-banner' : ''}" data-nav ${attrs} aria-label="${name}"`
+    + ` style="--tile:${app.color};${app.ink ? `--tile-ink:${app.ink}` : ''}">`;
+  if (look.banner) return open + `<img class="banner" src="${look.banner}" alt=""></button>`;
+  const mark = look.icon
+    ? `<img class="icon" src="${look.icon}" alt="">`
+    : `<span class="mark" aria-hidden="true">${escapeHtml(app.name[0])}</span>`;
+  return open + (installed && !pkg ? `<span class="badge">${t('install')}</span>` : '') + mark + name + '</button>';
+}
+
+const PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+
 function renderApps() {
   refreshInstalled();
-  $('app-row').innerHTML = APPS.map((app, i) => {
-    const pkg = packageFor(app);
-    const look = pkg ? artFor(pkg) : {};
-    const name = escapeHtml(app.name);
-    const open = `<li><button class="app${look.banner ? ' has-banner' : ''}" data-nav data-app="${i}" aria-label="${name}"`
-      + ` style="--tile:${app.color};${app.ink ? `--tile-ink:${app.ink}` : ''}">`;
-    if (look.banner) return open + `<img class="banner" src="${look.banner}" alt=""></button></li>`;
-    const mark = look.icon
-      ? `<img class="icon" src="${look.icon}" alt="">`
-      : `<span class="mark" aria-hidden="true">${app.name[0]}</span>`;
-    return open
-      + (installed && !pkg ? `<span class="badge">${t('install')}</span>` : '')
-      + mark + name + '</button></li>';
-  }).join('');
+  $('app-row').innerHTML = rowApps().map((app, i) => `<li>${tileHtml(app, `data-app="${i}"`)}</li>`).join('')
+    + `<li><button class="app-add" id="app-add" data-nav aria-label="${escapeHtml(t('organize'))}">${PLUS}</button></li>`;
+}
+
+function launchApp(app) {
+  if (!native) return;
+  const pkg = packageFor(app);
+  if (!pkg || !native.launch(pkg)) native.openStore(app.name);
 }
 
 $('app-row').addEventListener('click', (e) => {
+  if (e.target.closest('#app-add')) { openOrganizer(0); return; }
   const btn = e.target.closest('[data-app]');
-  if (!btn || !native) return;
-  const app = APPS[Number(btn.dataset.app)];
-  const pkg = packageFor(app);
-  if (!pkg || !native.launch(pkg)) native.openStore(app.name);
+  if (btn) launchApp(rowApps()[Number(btn.dataset.app)]);
 });
+
+// ---------- Arrange apps ----------
+
+let editSel = 0;
+
+function openOrganizer(index) {
+  editSel = index;
+  renderEditor();
+  openView('apps', $('edit-row').querySelector(`[data-edit="${editSel}"]`));
+}
+
+function renderEditor() {
+  const apps = rowApps();
+  editSel = Math.max(0, Math.min(editSel, apps.length - 1));
+  $('edit-row').innerHTML = apps.map((app, i) =>
+    `<li${i === editSel ? ' class="is-picked"' : ''}>${tileHtml(app, `data-edit="${i}"`)}</li>`).join('')
+    + `<li><button class="app-add wide" id="add-app" data-nav>${PLUS}<span>${escapeHtml(t('addApp'))}</span></button></li>`;
+  renderEditorStatus();
+}
+
+function renderEditorStatus() {
+  const apps = rowApps();
+  if (!apps.length) { $('edit-status').textContent = ''; return; }
+  $('edit-status').innerHTML = `<b>${escapeHtml(apps[editSel].name)}</b> · `
+    + escapeHtml(t('position').replace('{n}', editSel + 1).replace('{total}', apps.length));
+  $('edit-row').querySelectorAll('li').forEach((li, i) => li.classList.toggle('is-picked', i === editSel));
+}
+
+function moveApp(step) {
+  const apps = rowApps();
+  const j = editSel + step;
+  if (j < 0 || j >= apps.length) return;
+  [apps[editSel], apps[j]] = [apps[j], apps[editSel]];
+  editSel = j;
+  saveRow(apps);
+  renderEditor();
+}
+
+$('move-left').addEventListener('click', () => moveApp(-1));
+$('move-right').addEventListener('click', () => moveApp(1));
+$('remove-app').addEventListener('click', () => {
+  const apps = rowApps();
+  if (apps.length <= 1) return;
+  apps.splice(editSel, 1);
+  saveRow(apps);
+  renderEditor();
+});
+$('apps-done').addEventListener('click', () => closeView());
+$('edit-row').addEventListener('click', (e) => {
+  if (e.target.closest('#add-app')) { openAdder(); return; }
+  const btn = e.target.closest('[data-edit]');
+  if (btn) { editSel = Number(btn.dataset.edit); renderEditorStatus(); }
+});
+
+// ---------- Add an installed app ----------
+
+function inRow(pkg) {
+  return rowApps().some((app) => packageFor(app) === pkg);
+}
+
+function openAdder() {
+  refreshInstalled();
+  renderAdder();
+  openView('add', $('add-grid').querySelector('[data-pkg]') || $('add-back'));
+  loadAdderArt();
+}
+
+function renderAdder() {
+  const list = (installed || []).slice().sort((a, b) => a.label.localeCompare(b.label));
+  $('add-note').textContent = native ? '' : t('addOnlyTv');
+  $('add-grid').innerHTML = list.map((a) => {
+    const look = art[a.pkg] || {};
+    const name = escapeHtml(a.label);
+    const badge = inRow(a.pkg) ? `<span class="badge on">✓ ${escapeHtml(t('inRow'))}</span>` : '';
+    if (look.banner) {
+      return `<button class="app has-banner" data-nav data-pkg="${escapeHtml(a.pkg)}" aria-label="${name}">`
+        + `<img class="banner" src="${look.banner}" alt="">${badge}</button>`;
+    }
+    const known = APPS.find((app) => app.packages.indexOf(a.pkg) >= 0);
+    const tile = known ? `--tile:${known.color};${known.ink ? `--tile-ink:${known.ink}` : ''}` : `--tile:${colorFor(a.pkg)}`;
+    return `<button class="app" data-nav data-pkg="${escapeHtml(a.pkg)}" style="${tile}">`
+      + badge + name + '</button>';
+  }).join('');
+}
+
+// Banners take a moment each to read, so they arrive one by one after the grid shows.
+function loadAdderArt() {
+  const missing = (installed || []).filter((a) => !(a.pkg in art));
+  const step = () => {
+    if (view !== 'add' || !missing.length) return;
+    artFor(missing.shift().pkg);
+    if (!missing.length || missing.length % 4 === 0) {
+      const focused = current && current.dataset.pkg;
+      renderAdder();
+      if (focused) focus($('add-grid').querySelector(`[data-pkg="${focused}"]`));
+    }
+    setTimeout(step, 0);
+  };
+  setTimeout(step, 50);
+}
+
+$('add-grid').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-pkg]');
+  if (!btn) return;
+  const pkg = btn.dataset.pkg;
+  const apps = rowApps();
+  if (inRow(pkg)) {
+    saveRow(apps.filter((app) => packageFor(app) !== pkg));
+  } else {
+    apps.push(appFor('pkg:' + pkg));
+    saveRow(apps);
+  }
+  renderAdder();
+  focus($('add-grid').querySelector(`[data-pkg="${pkg}"]`));
+});
+$('add-back').addEventListener('click', () => { renderEditor(); openView('apps', $('add-app')); });
 
 // ---------- Settings ----------
 
@@ -540,6 +832,9 @@ function renderChoices() {
     const label = key === 'auto' ? t('newsAuto') : key === 'off' ? t('off') : NEWS[key].label;
     return `<button data-nav data-news="${key}" ${pressed(key === prefs.news)}>${label}</button>`;
   }).join('');
+  $('night-choices').innerHTML = [true, false].map((on) =>
+    `<button data-nav data-night="${on}" ${pressed(on === prefs.night)}>${on ? t('on') : t('off')}</button>`
+  ).join('');
   $('photo-choices').innerHTML = [true, false].map((on) =>
     `<button data-nav data-photos="${on}" ${pressed(on === prefs.photos)}>${on ? t('on') : t('off')}</button>`
   ).join('');
@@ -570,6 +865,7 @@ function openSettings() {
   $('calendar-status').textContent = '';
   $('calendar-input').value = prefs.calendarUrl;
   $('settings').hidden = false;
+  document.body.classList.add('in-settings');
   $('settings').scrollTop = 0;
   focus(document.querySelector('#lang-choices [aria-pressed="true"]'));
 }
@@ -577,6 +873,7 @@ function openSettings() {
 function closeSettings() {
   if (document.activeElement) document.activeElement.blur();
   $('settings').hidden = true;
+  document.body.classList.remove('in-settings');
   focus($('settings-btn'));
 }
 
@@ -603,6 +900,11 @@ $('settings').addEventListener('click', (e) => {
     renderClock();
     renderAgenda();
     selector = `[data-hour12="${d.hour12}"]`;
+  } else if (d.night) {
+    prefs.night = d.night === 'true';
+    store.set('night', prefs.night);
+    applyNight();
+    selector = `[data-night="${d.night}"]`;
   } else if (d.margin) {
     prefs.margin = Number(d.margin);
     store.set('margin', prefs.margin);
@@ -683,6 +985,26 @@ $('calendar-form').addEventListener('submit', async (e) => {
 // ---------- Remote control navigation ----------
 
 let current = null;
+let view = null; // full-screen view over the home screen: 'agenda', 'apps' or 'add'
+let homeFocus = null;
+
+function openView(name, target) {
+  if (!view) homeFocus = current;
+  ['agenda', 'apps', 'add'].forEach((v) => { $(v + '-view').hidden = v !== name; });
+  view = name;
+  document.body.classList.add('in-view');
+  $(name + '-view').scrollTop = 0;
+  focus(target);
+}
+
+function closeView() {
+  if (!view) return;
+  $(view + '-view').hidden = true;
+  view = null;
+  document.body.classList.remove('in-view');
+  const back = homeFocus && document.body.contains(homeFocus) ? homeFocus : document.querySelector('#app-row .app');
+  focus(back);
+}
 
 function focus(el) {
   if (!el) return;
@@ -695,12 +1017,14 @@ function focus(el) {
   } else {
     el.focus({ preventScroll: true });
   }
-  if (el.classList.contains('app')) revealApp(el.parentElement);
-  if (!$('settings').hidden) el.scrollIntoView({ block: 'nearest' });
+  if (el.closest('#app-row')) revealApp(el.parentElement);
+  if (el.dataset.edit) { editSel = Number(el.dataset.edit); renderEditorStatus(); }
+  if (activeScope() !== $('home')) el.scrollIntoView({ block: 'nearest' });
 }
 
 function activeScope() {
-  return $('settings').hidden ? $('home') : $('settings');
+  if (!$('settings').hidden) return $('settings');
+  return view ? $(view + '-view') : $('home');
 }
 
 // Pick the nearest focusable in the pressed direction, favouring items in line with the current one.
@@ -747,28 +1071,137 @@ function revealApp(el) {
   row.style.transform = `translateX(${-shift}px)`;
 }
 
-// Called by the app for the remote's Back and Menu buttons; Back returns whether it was used.
+// ---------- Screensaver (after SAVER_AFTER without a key press) ----------
+
+let saverOn = false;
+let saverTimer = null;
+let saverRelease = null;
+
+function setKeepScreenOn(on) {
+  if (native && native.setKeepScreenOn) native.setKeepScreenOn(on);
+}
+
+// Any key press: wake the screensaver if it is on, and restart the idle countdown.
+function noteActivity() {
+  const wasOn = saverOn;
+  if (saverOn) {
+    saverOn = false;
+    document.body.classList.remove('saving');
+    $('saver').hidden = true;
+  }
+  clearTimeout(saverTimer);
+  clearTimeout(saverRelease);
+  setKeepScreenOn(true);
+  saverTimer = setTimeout(startSaver, SAVER_AFTER);
+  return wasOn;
+}
+
+function startSaver() {
+  if (!$('settings').hidden) closeSettings();
+  saverOn = true;
+  renderSaver();
+  $('saver').hidden = false;
+  document.body.classList.add('saving');
+  // Keep our screensaver for an hour, then let the TV's own screensaver and sleep take over.
+  saverRelease = setTimeout(() => setKeepScreenOn(false), SAVER_RELEASE);
+}
+
+function renderSaver() {
+  const now = new Date();
+  const hh = prefs.hour12 ? (now.getHours() % 12 || 12) : String(now.getHours()).padStart(2, '0');
+  $('saver-clock').textContent = hh + ':' + String(now.getMinutes()).padStart(2, '0');
+  $('saver-date').textContent = capitalize(now.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' }));
+
+  const cur = lastWeather && lastWeather.current;
+  if (cur) {
+    const [, icon] = describe(cur.weather_code, cur.is_day === 1);
+    $('saver-weather').innerHTML = svg(icon) + `<span class="temp">${Math.round(cur.temperature_2m)}°</span>`
+      + (typeof cur.apparent_temperature === 'number'
+        ? `<span class="feels">${t('feels')} ${Math.round(cur.apparent_temperature)}°</span>` : '');
+  } else {
+    $('saver-weather').innerHTML = '';
+  }
+
+  const next = calendarEvents ? upcoming()[0] : null;
+  $('saver-next').innerHTML = next ? `${escapeHtml(eventWhen(next))} · <b>${escapeHtml(next.title)}</b>` : '';
+
+  // Drift a little every minute so nothing stays burnt into the same pixels.
+  const dx = Math.round(Math.random() * 48 - 24);
+  const dy = Math.round(Math.random() * 32 - 16);
+  $('saver-info').style.transform = `translate(${dx}px, ${dy}px)`;
+}
+
+// ---------- Hooks the app calls ----------
+
+// Back and Menu; Back returns whether it was used.
 window.tvBack = () => {
-  if ($('settings').hidden) return false;
-  closeSettings();
-  return true;
+  if (noteActivity()) return true;
+  if (!$('settings').hidden) { closeSettings(); return true; }
+  if (view === 'add') { renderEditor(); openView('apps', $('add-app')); return true; }
+  if (view) { closeView(); return true; }
+  return false;
 };
 window.tvMenu = () => {
+  if (noteActivity()) return;
+  if (view) return;
   if ($('settings').hidden) openSettings(); else closeSettings();
 };
 window.tvResume = () => {
+  noteActivity();
   fitStage();
   renderClock();
+  applyNight();
   renderApps();
-  if (current && current.classList.contains('app')) focus($('app-row').querySelector(`[data-app="${current.dataset.app}"]`));
+  if (view === 'apps') renderEditor();
+  if (current && current.dataset.app) focus($('app-row').querySelector(`[data-app="${current.dataset.app}"]`));
 };
 
 const BACK_KEYS = ['Escape', 'GoBack', 'BrowserBack'];
 const BACK_CODES = [461, 10009]; // LG webOS, Samsung Tizen
 
+// Runs before the other key handlers: a key that wakes the screensaver does nothing else.
+document.addEventListener('keydown', (e) => {
+  if (noteActivity()) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+}, true);
+
+// OK on a home tile opens the app when released; held down, it opens "Arrange apps" instead.
+let pressTimer = null;
+let pressTile = null;
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' || !current || !current.dataset.app) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  if (e.repeat || pressTimer) return;
+  pressTile = current;
+  pressTimer = setTimeout(() => {
+    pressTimer = null;
+    pressTile = null;
+    openOrganizer(Number(current.dataset.app));
+  }, 700);
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.key !== 'Enter' || !pressTimer) return;
+  clearTimeout(pressTimer);
+  pressTimer = null;
+  if (pressTile === current) launchApp(rowApps()[Number(pressTile.dataset.app)]);
+  pressTile = null;
+});
+
 document.addEventListener('keydown', (e) => {
   const dir = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[e.key];
   const typing = document.activeElement && document.activeElement.tagName === 'INPUT';
+
+  // On the headline switcher, left/right change the source instead of moving.
+  if (current && current.id === 'news-switch' && (dir === 'left' || dir === 'right')) {
+    e.preventDefault();
+    cycleNews(dir === 'left' ? -1 : 1);
+    return;
+  }
 
   if (dir) {
     // Inside the text box, left/right move the cursor; up/down leave it.
@@ -791,6 +1224,8 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+$('news-switch').addEventListener('click', () => cycleNews(1));
+
 // Keep the highlight in sync if a pointer or the TV's own focus moves it.
 document.addEventListener('focusin', (e) => {
   if (e.target.matches('[data-nav]') && e.target !== current) focus(e.target);
@@ -805,8 +1240,10 @@ loadWeather();
 loadCalendar();
 loadNews();
 loadPhotos();
+applyNight();
+noteActivity();
 setInterval(loadWeather, 15 * 60 * 1000);
 setInterval(loadCalendar, 10 * 60 * 1000);
 setInterval(loadNews, 30 * 60 * 1000);
 setInterval(() => { if (prefs.photos) loadPhotos(); }, 6 * 60 * 60 * 1000);
-focus(document.querySelector('.app'));
+focus(document.querySelector('#app-row .app'));

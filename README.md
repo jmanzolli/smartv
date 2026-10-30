@@ -26,8 +26,18 @@ Para atualizar, repita o passo 4. As configurações são mantidas.
 |---|---|
 | Setas | Movem o destaque |
 | OK | Abre o app ou ativa a opção |
+| OK segurado sobre um app | Abre **Organizar apps** |
+| Esquerda/direita sobre a fonte das manchetes | Troca a fonte |
 | ☰ (Menu) | Abre e fecha as configurações |
-| Voltar | Fecha as configurações; na tela inicial, volta ao Fire TV |
+| Voltar | Fecha a tela aberta; na tela inicial, volta ao Fire TV |
+
+Na tela inicial:
+
+- **Agenda:** os 3 próximos eventos. **Ver agenda completa** mostra os próximos 7 dias, com horário de término e local.
+- **Clima:** temperatura, sensação térmica e previsão de 3 dias.
+- **Fileira de apps:** o bloco **+** no fim (ou OK segurado sobre um app) abre **Organizar apps**, onde você muda a ordem, remove apps e adiciona qualquer app instalado na TV.
+- **Proteção de tela:** depois de 5 minutos sem mexer no controle, fica só a foto com o relógio, o clima e o próximo evento. Qualquer botão volta. Depois de uma hora assim, a TV volta a poder dormir ou mostrar a proteção de tela dela.
+- **Modo noturno:** das 22:00 às 7:00 a tela escurece, a foto sai e as manchetes somem.
 
 Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 
@@ -37,6 +47,8 @@ Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 - **Agenda:** cole o *endereço secreto no formato iCal* do Google Agenda. Ele fica em **Configurações → (sua agenda) → Integrar agenda**, no computador. Para colar com facilidade, use o teclado do app **Amazon Fire TV** no celular.
 - **Fonte das manchetes:** g1, CBC News, Radio-Canada ou El País. Por padrão segue o idioma.
 - **Fotos de fundo:** as fotos do dia do Bing das últimas duas semanas, trocadas a cada 2 minutos.
+- **Margem da tela:** para TVs que cortam as bordas.
+- **Modo noturno:** ligado ou desligado.
 - **Abrir ao ligar a TV.**
 
 ## Limites do Fire OS
@@ -44,9 +56,9 @@ Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
 - **O botão Home sempre volta para a tela da Amazon.** O Fire OS não deixa outro app virar a tela inicial padrão. O ClaudeTV fica em primeiro lugar em *Seus apps*, e a opção *Abrir ao ligar a TV* tenta abri-lo depois que a TV liga. Nas versões mais novas do Fire OS essa abertura automática pode ser bloqueada.
 - **Apps que não estão instalados aparecem com a etiqueta "Instalar".** Com OK, a Appstore abre na página do app.
 
-## Mudar os apps da fileira
+## Apps que vêm na fileira
 
-Os apps ficam na lista `APPS`, no início de [`web/tv.js`](web/tv.js). Cada um tem nome, cor e os nomes de pacote conhecidos. Se nenhum pacote bater, o app é procurado pelo nome que aparece na TV.
+A fileira inicial é a lista `APPS`, no início de [`web/tv.js`](web/tv.js). Cada um tem nome, cor e os nomes de pacote conhecidos. Se nenhum pacote bater, o app é procurado pelo nome que aparece na TV. Depois que você organiza a fileira pelo controle, vale a sua ordem.
 
 ## Como o projeto é organizado
 

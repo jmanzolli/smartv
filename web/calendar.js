@@ -85,6 +85,7 @@
       });
 
       if (name === 'SUMMARY') ev.title = unescapeText(value);
+      else if (name === 'LOCATION') ev.location = unescapeText(value);
       else if (name === 'UID') ev.uid = value;
       else if (name === 'STATUS') ev.cancelled = value === 'CANCELLED';
       else if (name === 'RRULE') ev.rule = parseRule(value);
@@ -107,7 +108,7 @@
       let duration = allDay ? DAY : 0;
       if (e.end) duration = toDate(e.end.parts, e.end.kind, e.end.tz) - start;
       return {
-        uid: e.uid, title: e.title || '', allDay, cancelled: !!e.cancelled,
+        uid: e.uid, title: e.title || '', location: e.location || '', allDay, cancelled: !!e.cancelled,
         startInfo: e.start, start, duration, rule: e.rule || null,
         exdates: e.exdates, recurrenceId: e.recurrenceId || null,
       };
@@ -196,7 +197,7 @@
       if (rule.count !== null && seen > rule.count) break;
       if (ev.exdates.indexOf(start.getTime()) >= 0) continue;
       if (moved[ev.uid] && moved[ev.uid].indexOf(start.getTime()) >= 0) continue;
-      out.push({ title: ev.title, allDay: ev.allDay, start, end: new Date(start.getTime() + ev.duration) });
+      out.push({ title: ev.title, location: ev.location, allDay: ev.allDay, start, end: new Date(start.getTime() + ev.duration) });
     }
     return out;
   }
@@ -213,7 +214,7 @@
       if (e.rule && !e.recurrenceId) {
         if (!e.cancelled) list = list.concat(expand(e, from, to, moved));
       } else if (!e.cancelled) {
-        list.push({ title: e.title, allDay: e.allDay, start: e.start, end: new Date(e.start.getTime() + e.duration) });
+        list.push({ title: e.title, location: e.location, allDay: e.allDay, start: e.start, end: new Date(e.start.getTime() + e.duration) });
       }
     });
 

@@ -30,6 +30,7 @@
           <span class="weather-temp" id="weather-temp">–</span>
           <div>
             <p class="weather-desc" id="weather-desc"></p>
+            <p class="weather-feels" id="weather-feels"></p>
             <p class="weather-city" id="weather-city"></p>
           </div>
         </div>
@@ -40,15 +41,29 @@
         <h2 data-i18n="agenda"></h2>
         <ol class="agenda-list" id="agenda-list"></ol>
         <p class="note" id="agenda-note"></p>
+        <button class="more-btn" id="agenda-more" data-nav hidden></button>
       </section>
 
       <section class="news">
-        <h2 id="news-title"></h2>
+        <div class="news-head">
+          <h2 data-i18n="news"></h2>
+          <button class="news-switch" id="news-switch" data-nav>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+            <span id="news-source"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <span class="news-dots" id="news-dots" aria-hidden="true"></span>
+        </div>
         <ol class="news-list" id="news-list"></ol>
         <p class="note" id="news-note"></p>
       </section>
 
       <p class="photo-credit" id="photo-credit"></p>
+
+      <p class="night-badge">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+        <span data-i18n="nightBadge"></span>
+      </p>
 
       <button class="settings-btn" id="settings-btn" data-nav data-i18n-label="settings">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
@@ -58,6 +73,77 @@
         <ul class="app-row" id="app-row"></ul>
       </nav>
     </main>
+
+    <section class="view" id="agenda-view" hidden>
+      <header class="view-head">
+        <div>
+          <p class="kicker" data-i18n="nextDays"></p>
+          <h1 data-i18n="agenda"></h1>
+        </div>
+        <button class="pill" id="agenda-back" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="back"></span>
+        </button>
+      </header>
+      <div class="agenda-days" id="agenda-days"></div>
+      <p class="hint" data-i18n="agendaHint"></p>
+    </section>
+
+    <section class="view" id="apps-view" hidden>
+      <header class="view-head">
+        <div>
+          <h1 data-i18n="organize"></h1>
+          <p class="lead" data-i18n="organizeHint"></p>
+        </div>
+        <button class="pill solid" id="apps-done" data-nav data-i18n="done"></button>
+      </header>
+      <ul class="edit-row" id="edit-row"></ul>
+      <div class="edit-actions">
+        <p class="edit-status" id="edit-status"></p>
+        <button class="pill" id="move-left" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="moveLeft"></span>
+        </button>
+        <button class="pill" id="move-right" data-nav>
+          <span data-i18n="moveRight"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button class="pill danger" id="remove-app" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+          <span data-i18n="removeApp"></span>
+        </button>
+      </div>
+      <p class="hint" data-i18n="organizeHow"></p>
+    </section>
+
+    <section class="view" id="add-view" hidden>
+      <header class="view-head">
+        <div>
+          <h1 data-i18n="addTitle"></h1>
+          <p class="lead" data-i18n="addHint"></p>
+        </div>
+        <button class="pill" id="add-back" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="back"></span>
+        </button>
+      </header>
+      <p class="note" id="add-note"></p>
+      <div class="add-grid" id="add-grid"></div>
+    </section>
+
+    <div class="saver" id="saver" hidden>
+      <p class="saver-credit" id="saver-credit"></p>
+      <div class="saver-info" id="saver-info">
+        <div>
+          <p class="saver-clock" id="saver-clock"></p>
+          <p class="saver-date" id="saver-date"></p>
+        </div>
+        <div class="saver-side">
+          <div class="saver-weather" id="saver-weather"></div>
+          <p class="saver-next" id="saver-next"></p>
+        </div>
+      </div>
+    </div>
 
     <aside class="settings" id="settings" hidden>
       <h2 data-i18n="settings"></h2>
@@ -94,6 +180,10 @@
       <h3 data-i18n="photos"></h3>
       <div class="choice-row" id="photo-choices"></div>
 
+      <h3 data-i18n="nightMode"></h3>
+      <div class="choice-row" id="night-choices"></div>
+      <p class="help" data-i18n="nightHint"></p>
+
       <div id="autostart-block" hidden>
         <h3 data-i18n="autostart"></h3>
         <div class="choice-row" id="autostart-choices"></div>
@@ -106,6 +196,8 @@
     </aside>
 
   </div>
+
+  <div class="night-dim" aria-hidden="true"></div>
 
   <script src="calendar.js"></script>
   <script src="tv.js"></script>
