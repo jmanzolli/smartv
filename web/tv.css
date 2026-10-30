@@ -159,7 +159,7 @@ body.overcast:not(.has-photo)::before {
 
 /* ---------- Agenda and headlines ---------- */
 
-.agenda, .news { padding-top: 44px; overflow: hidden; }
+.agenda, .news { padding: 44px 0 0 6px; margin-left: -6px; overflow: hidden; }
 
 .agenda h2, .news h2 {
   font-size: 26px;
@@ -187,7 +187,7 @@ body.overcast:not(.has-photo)::before {
 .news-switch span { min-width: 140px; text-align: center; }
 .news-switch svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
-.news-dots { display: flex; margin-left: 14px; }
+.news-dots { display: flex; margin-left: 24px; }
 .news-dots i { width: 9px; height: 9px; margin-right: 7px; border-radius: 50%; background: var(--ink-faint); opacity: 0.6; }
 .news-dots i.on { background: var(--ink); opacity: 1; }
 
@@ -204,6 +204,15 @@ body.overcast:not(.has-photo)::before {
   text-shadow: none;
 }
 .more-btn span { color: var(--ink-soft); margin-left: 6px; }
+
+/* Remote focus on the small home controls: same yellow ring as the app tiles. */
+.more-btn, .news-switch { transform-origin: left center; transition: transform 160ms ease-out, background-color 160ms; }
+.more-btn.is-focused, .news-switch.is-focused {
+  background: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 0 0 4px var(--focus);
+  transform: scale(1.06);
+}
+.more-btn.is-focused span { color: var(--ink); }
 
 .agenda-list, .news-list { list-style: none; }
 
