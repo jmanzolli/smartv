@@ -22,42 +22,41 @@ Para atualizar, repita o passo 4. As configurações são mantidas.
 
 ## Usar
 
+A tela inicial mostra só o que vale olhar de relance: relógio, clima, o próximo compromisso, o próximo lembrete e a fileira de apps. O resto fica a um botão de distância.
+
 | Botão do controle | O que faz |
 |---|---|
-| Setas | Movem o destaque |
+| Setas | Movem o destaque. **↓** a partir dos apps abre o painel **Hoje**; **↑** volta |
 | OK | Abre o app ou ativa a opção |
-| OK segurado sobre um app | Abre **Organizar apps** |
-| Esquerda/direita sobre a fonte das manchetes | Troca a fonte |
-| ☰ (Menu) | Abre e fecha as configurações |
+| ☰ (Menu) sobre um app | Abrir, Mover, Remover da fileira ou Adicionar app |
+| ☰ sobre um lembrete | Marcar como feito ou Apagar |
+| ☰ em outro lugar | Abre e fecha as configurações |
+| OK segurado sobre um app | O mesmo que ☰ sobre ele |
 | Voltar | Fecha a tela aberta; na tela inicial, volta ao Fire TV |
 
-Na tela inicial:
+- **Painel Hoje:** agenda de hoje e amanhã (com horário de término e local), lembretes e notícias. **Próximos 7 dias** abre a semana com uma coluna por dia. Sobre a fonte das notícias, ← → troca entre g1, CBC News, Radio-Canada e El País.
+- **Mover um app:** ☰ → **Mover**, depois ← → e OK para soltar. O bloco **+** no fim da fileira adiciona qualquer app instalado na TV. Antes de você mexer na fileira, os apps padrão que não estão instalados ficam de fora.
+- **Lembretes:** **Nova nota** cria uma nota com aviso opcional (em 30 min, em 1 hora, hoje às 20:00, amanhã às 8:00), ou com o horário escrito no texto. Na hora marcada, um aviso aparece no meio da tela com **Feito** e **Adiar 10 min**.
+- **Proteção de tela:** depois de 5 minutos sem mexer no controle, fica só a foto com o relógio, a temperatura e o próximo compromisso. Qualquer botão volta. Depois de uma hora assim, a TV volta a poder dormir ou mostrar a proteção de tela dela.
+- **Modo noturno:** das 22:00 às 7:00 o céu escurece, a foto sai e os apps perdem cor.
 
-- **Agenda:** os 3 próximos eventos. **Ver agenda completa** mostra os próximos 7 dias, com horário de término e local.
-- **Clima:** temperatura, sensação térmica e previsão de 3 dias.
-- **Fileira de apps:** o bloco **+** no fim (ou OK segurado sobre um app) abre **Organizar apps**, onde você muda a ordem, remove apps e adiciona qualquer app instalado na TV.
-- **Proteção de tela:** depois de 5 minutos sem mexer no controle, fica só a foto com o relógio, o clima e o próximo evento. Qualquer botão volta. Depois de uma hora assim, a TV volta a poder dormir ou mostrar a proteção de tela dela.
-- **Modo noturno:** das 22:00 às 7:00 a tela escurece, a foto sai e as manchetes somem.
-- **Lembretes:** embaixo da agenda ficam as próximas notas. **+ Nova** cria uma nota com aviso opcional (em 30 min, em 1 hora, hoje às 20:00, amanhã às 8:00). Na hora marcada, um aviso aparece na tela com **Feito** e **Adiar 10 min**.
+### Pelo celular
 
-### Notas pelo celular
+No painel **Hoje**, na tela **Lembretes** e nas configurações há um QR code e um endereço do tipo `ntfy.sh/claudetv-xxxxxxxx`, criado só para a sua TV. Abra esse endereço no celular (ou no app **ntfy**) e mande uma mensagem:
 
-Na tela **Lembretes** há um QR code e um endereço do tipo `ntfy.sh/claudetv-xxxxxxxx`, criado só para a sua TV. Abra esse endereço no celular (ou no app **ntfy**) e mande uma mensagem: em até 30 segundos ela vira uma nota na TV. Um horário no texto vira aviso, por exemplo `dentista amanhã 9h` ou `ligar pra mãe às 19:30`.
+- **Uma nota:** qualquer texto vira nota em até 30 segundos. Um horário no texto vira aviso, por exemplo `dentista amanhã 9h` ou `ligar pra mãe às 19:30`.
+- **A agenda:** `agenda: https://calendar.google.com/...basic.ics` conecta o endereço secreto iCal sem usar o teclado da TV.
+- **A cidade do clima:** `cidade: Lisboa`.
 
-O serviço [ntfy.sh](https://ntfy.sh) é gratuito e não pede conta, mas é de terceiros: as mensagens passam por ele e ficam guardadas por umas 12 horas. Quem souber o endereço pode mandar notas para a TV. Se a TV ficar desligada mais de 12 horas, as mensagens desse período se perdem. Dá para desligar em **Configurações → Notas pelo celular**.
+O serviço [ntfy.sh](https://ntfy.sh) é gratuito e não pede conta, mas é de terceiros: as mensagens passam por ele e ficam guardadas por umas 12 horas. Quem souber o endereço pode mandar mensagens para a TV. Se a TV ficar desligada mais de 12 horas, as mensagens desse período se perdem. Dá para desligar em **Configurações → Notas pelo celular**.
 
-Nas configurações (engrenagem no canto ou botão ☰) você escolhe:
+### Configurações
 
-- **Idioma:** português, inglês, francês ou espanhol.
-- **Formato da hora:** 24 h ou 12 h.
-- **Cidade do clima:** Montréal por padrão.
-- **Agenda:** cole o *endereço secreto no formato iCal* do Google Agenda. Ele fica em **Configurações → (sua agenda) → Integrar agenda**, no computador. Para colar com facilidade, use o teclado do app **Amazon Fire TV** no celular.
-- **Fonte das manchetes:** g1, CBC News, Radio-Canada ou El País. Por padrão segue o idioma.
-- **Fotos de fundo:** as fotos do dia do Bing das últimas duas semanas, trocadas a cada 2 minutos.
-- **Margem da tela:** para TVs que cortam as bordas.
-- **Notas pelo celular:** ligado ou desligado, com o endereço da sua TV.
-- **Modo noturno:** ligado ou desligado.
-- **Abrir ao ligar a TV.**
+Engrenagem no canto ou ☰ na tela inicial. Cada linha mostra o valor atual; OK passa para o próximo valor, e Cidade e Agenda abrem um campo para digitar.
+
+- **Geral:** idioma (português, inglês, francês ou espanhol), formato da hora (24 h ou 12 h) e margem da tela, para TVs que cortam as bordas.
+- **Informações:** cidade do clima (Montréal por padrão), agenda (o *endereço secreto no formato iCal* do Google Agenda, em **Configurações → (sua agenda) → Integrar agenda**, no computador) e fonte das notícias.
+- **Tela:** fotos de fundo (as do Bing das últimas duas semanas, trocadas a cada 2 minutos), modo noturno, notas pelo celular e abrir ao ligar a TV.
 
 ## Limites do Fire OS
 

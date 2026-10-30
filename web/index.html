@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1920">
   <meta name="robots" content="noindex, nofollow">
-  <title>Início</title>
+  <title>ClaudeTV</title>
   <link rel="stylesheet" href="tv.css">
 </head>
 <body class="sky-night">
@@ -17,153 +17,137 @@
 
   <div class="stage" id="stage">
 
+    <!-- Home: only what's worth a glance. Everything else is one press away. -->
     <main class="home" id="home">
       <section class="now">
-        <p class="greeting" id="greeting"></p>
         <p class="clock" id="clock"></p>
-        <p class="date" id="date"></p>
+        <div class="date-row">
+          <p class="date" id="date"></p>
+          <span class="night-badge">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+            <span data-i18n="nightBadge"></span>
+          </span>
+        </div>
       </section>
 
       <section class="weather" aria-live="polite">
-        <div class="weather-now">
-          <span class="weather-icon" id="weather-icon"></span>
-          <span class="weather-temp" id="weather-temp">–</span>
-          <div>
-            <p class="weather-desc" id="weather-desc"></p>
-            <p class="weather-feels" id="weather-feels"></p>
-            <p class="weather-city" id="weather-city"></p>
-          </div>
+        <span class="weather-icon" id="weather-icon"></span>
+        <span class="weather-temp" id="weather-temp"></span>
+        <div class="weather-text">
+          <p class="weather-desc" id="weather-desc"></p>
+          <p class="weather-sub" id="weather-sub"></p>
         </div>
-        <ol class="forecast" id="forecast"></ol>
-      </section>
-
-      <section class="agenda">
-        <h2 data-i18n="agenda"></h2>
-        <ol class="agenda-list" id="agenda-list"></ol>
-        <p class="note" id="agenda-note"></p>
-        <button class="more-btn" id="agenda-more" data-nav hidden></button>
-        <h2 class="notes-title" data-i18n="reminders"></h2>
-        <div class="note-chips" id="note-chips"></div>
-      </section>
-
-      <section class="news">
-        <div class="news-head">
-          <h2 data-i18n="news"></h2>
-          <button class="news-switch" id="news-switch" data-nav>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-            <span id="news-source"></span>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <span class="news-dots" id="news-dots" aria-hidden="true"></span>
-        </div>
-        <ol class="news-list" id="news-list"></ol>
-        <p class="note" id="news-note"></p>
+        <button class="icon-btn" id="settings-btn" data-nav data-i18n-label="settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        </button>
       </section>
 
       <p class="photo-credit" id="photo-credit"></p>
 
-      <p class="night-badge">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
-        <span data-i18n="nightBadge"></span>
-      </p>
-
-      <button class="settings-btn" id="settings-btn" data-nav data-i18n-label="settings">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
-      </button>
+      <section class="glance">
+        <p class="label" data-i18n="next"></p>
+        <p class="next-title" id="next-title"></p>
+        <p class="next-sub" id="next-sub"></p>
+        <p class="next-reminder" id="next-reminder"></p>
+      </section>
 
       <nav class="apps" aria-label="Apps">
         <ul class="app-row" id="app-row"></ul>
       </nav>
+
+      <button class="today-handle" id="today-handle">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        <span data-i18n="todayHandle"></span>
+      </button>
     </main>
 
-    <section class="view" id="agenda-view" hidden>
-      <header class="view-head">
-        <div>
-          <p class="kicker" data-i18n="nextDays"></p>
-          <h1 data-i18n="agenda"></h1>
-        </div>
-        <button class="pill" id="agenda-back" data-nav>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-          <span data-i18n="back"></span>
-        </button>
+    <!-- "Today" panel: agenda, reminders and headlines. Down from the apps opens it. -->
+    <section class="view today" id="today-view" hidden>
+      <header class="today-head">
+        <p class="today-clock" id="today-clock"></p>
+        <p class="today-date" id="today-date"></p>
+        <p class="today-weather" id="today-weather"></p>
       </header>
-      <div class="agenda-days" id="agenda-days"></div>
-      <p class="hint" data-i18n="agendaHint"></p>
-    </section>
-
-    <section class="view" id="apps-view" hidden>
-      <header class="view-head">
-        <div>
-          <h1 data-i18n="organize"></h1>
-          <p class="lead" data-i18n="organizeHint"></p>
+      <div class="sheet">
+        <div class="col">
+          <h2 data-i18n="agenda"></h2>
+          <div class="col-body" id="today-agenda"></div>
+          <div class="col-foot">
+            <button class="pill" id="week-btn" data-nav data-i18n="nextDays"></button>
+          </div>
         </div>
-        <button class="pill solid" id="apps-done" data-nav data-i18n="done"></button>
-      </header>
-      <ul class="edit-row" id="edit-row"></ul>
-      <div class="edit-actions">
-        <p class="edit-status" id="edit-status"></p>
-        <button class="pill" id="move-left" data-nav>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-          <span data-i18n="moveLeft"></span>
-        </button>
-        <button class="pill" id="move-right" data-nav>
-          <span data-i18n="moveRight"></span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
-        </button>
-        <button class="pill danger" id="remove-app" data-nav>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
-          <span data-i18n="removeApp"></span>
-        </button>
+        <div class="col">
+          <h2 data-i18n="reminders"></h2>
+          <div class="col-body" id="today-notes"></div>
+          <div class="col-foot">
+            <button class="pill" id="today-new-note" data-nav>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              <span data-i18n="newNote"></span>
+            </button>
+            <div class="mini-qr" id="today-phone">
+              <div class="qr" id="today-qr"></div>
+              <p><span data-i18n="fromPhoneShort"></span><br><b class="phone-address"></b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="news-head">
+            <h2 data-i18n="news"></h2>
+            <button class="news-switch" id="news-switch" data-nav>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+              <span id="news-source"></span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <span class="news-dots" id="news-dots" aria-hidden="true"></span>
+          </div>
+          <ol class="news-list" id="news-list"></ol>
+          <p class="note" id="news-note"></p>
+        </div>
       </div>
-      <p class="hint" data-i18n="organizeHow"></p>
     </section>
 
-    <section class="view" id="add-view" hidden>
-      <header class="view-head">
-        <div>
-          <h1 data-i18n="addTitle"></h1>
-          <p class="lead" data-i18n="addHint"></p>
-        </div>
-        <button class="pill" id="add-back" data-nav>
+    <section class="view page" id="week-view" hidden>
+      <header class="page-head">
+        <h1 data-i18n="nextDays"></h1>
+        <p class="count" id="week-count"></p>
+        <button class="pill" id="week-back" data-nav>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
           <span data-i18n="back"></span>
         </button>
       </header>
-      <p class="note" id="add-note"></p>
-      <div class="add-grid" id="add-grid"></div>
+      <div class="week-grid" id="week-grid"></div>
+      <p class="hint" data-i18n="weekHint"></p>
     </section>
 
-    <section class="view" id="notes-view" hidden>
-      <header class="view-head">
-        <div>
-          <p class="kicker" data-i18n="notesKicker"></p>
-          <h1 data-i18n="reminders"></h1>
-        </div>
-        <div class="head-actions">
-          <button class="pill solid" id="notes-new" data-nav>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-            <span data-i18n="newNote"></span>
-          </button>
-          <button class="pill" id="notes-back" data-nav>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
-            <span data-i18n="back"></span>
-          </button>
-        </div>
+    <section class="view page" id="notes-view" hidden>
+      <header class="page-head">
+        <h1 data-i18n="reminders"></h1>
+        <p class="count" id="notes-count"></p>
+        <button class="pill solid" id="notes-new" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          <span data-i18n="newNote"></span>
+        </button>
+        <button class="pill" id="notes-back" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="back"></span>
+        </button>
       </header>
       <div class="notes-body">
         <div class="notes-list" id="notes-list"></div>
-        <aside class="phone-panel" id="phone-panel">
-          <div class="qr" id="phone-qr"></div>
+        <aside class="phone-card" id="notes-phone">
+          <div class="qr" id="notes-qr"></div>
           <h2 data-i18n="phoneTitle"></h2>
-          <p class="phone-address" id="phone-address"></p>
+          <p class="phone-address"></p>
           <p class="phone-hint" data-i18n="phoneHint"></p>
         </aside>
       </div>
       <p class="hint" data-i18n="notesHint"></p>
     </section>
 
-    <section class="view" id="note-new-view" hidden>
-      <h1 class="new-title" data-i18n="newNote"></h1>
+    <section class="view page" id="note-new-view" hidden>
+      <header class="page-head">
+        <h1 data-i18n="newNote"></h1>
+      </header>
       <form id="note-form" autocomplete="off">
         <label class="field-label" for="note-input" data-i18n="noteWhat"></label>
         <input type="text" id="note-input" data-nav data-i18n-placeholder="notePlaceholder">
@@ -176,91 +160,85 @@
       </form>
     </section>
 
-    <div class="alert" id="alert" role="alert" hidden>
-      <div class="alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z"/><path d="M10 21h4"/></svg></div>
-      <div class="alert-text">
+    <section class="view page" id="add-view" hidden>
+      <header class="page-head">
+        <h1 data-i18n="addTitle"></h1>
+        <p class="count" id="add-count"></p>
+        <button class="pill solid" id="add-done" data-nav data-i18n="done"></button>
+      </header>
+      <p class="note" id="add-note"></p>
+      <div class="add-grid" id="add-grid"></div>
+    </section>
+
+    <aside class="settings" id="settings" hidden>
+      <h2 data-i18n="settings"></h2>
+      <div class="settings-list" id="settings-list"></div>
+
+      <div class="settings-edit" id="settings-edit" hidden>
+        <div id="edit-city">
+          <h3 data-i18n="city"></h3>
+          <form class="field-row" id="city-form" autocomplete="off">
+            <input type="text" id="city-input" data-nav data-i18n-placeholder="cityPlaceholder">
+            <button type="submit" class="pill" data-nav data-i18n="search"></button>
+          </form>
+          <p class="status" id="city-status"></p>
+          <div class="city-results" id="city-results"></div>
+        </div>
+        <div id="edit-calendar">
+          <h3 data-i18n="calendarLabel"></h3>
+          <form class="field-row" id="calendar-form" autocomplete="off">
+            <input type="url" id="calendar-input" data-nav data-i18n-placeholder="calendarPlaceholder">
+            <button type="submit" class="pill" data-nav data-i18n="save"></button>
+          </form>
+          <p class="status" id="calendar-status"></p>
+          <p class="help" data-i18n="calendarHint"></p>
+        </div>
+        <button class="pill" id="edit-back" data-nav>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-i18n="back"></span>
+        </button>
+      </div>
+
+      <div class="setup-card" id="setup-card">
+        <div class="qr" id="setup-qr"></div>
+        <div>
+          <p class="setup-title" data-i18n="phoneSetup"></p>
+          <p class="setup-hint" data-i18n="phoneSetupHint"></p>
+          <p class="phone-address"></p>
+        </div>
+      </div>
+    </aside>
+
+    <div class="ctx" id="ctx" role="menu" hidden>
+      <p class="ctx-title" id="ctx-title"></p>
+      <div class="ctx-items" id="ctx-items"></div>
+    </div>
+
+    <p class="move-hint" id="move-hint" hidden></p>
+
+    <div class="alert-layer" id="alert" role="alert" hidden>
+      <div class="alert-card">
+        <div class="alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z"/><path d="M10 21h4"/></svg></div>
         <p class="alert-kicker" id="alert-kicker"></p>
         <p class="alert-title" id="alert-title"></p>
-      </div>
-      <div class="alert-actions">
-        <button class="pill solid" id="alert-done" data-nav data-i18n="noteDone"></button>
-        <button class="pill" id="alert-snooze" data-nav data-i18n="snooze"></button>
+        <div class="alert-actions">
+          <button class="pill solid" id="alert-done" data-nav data-i18n="noteDone"></button>
+          <button class="pill" id="alert-snooze" data-nav data-i18n="snooze"></button>
+        </div>
       </div>
     </div>
 
     <p class="toast" id="toast" hidden></p>
 
     <div class="saver" id="saver" hidden>
-      <p class="saver-credit" id="saver-credit"></p>
       <div class="saver-info" id="saver-info">
-        <div>
-          <p class="saver-clock" id="saver-clock"></p>
-          <p class="saver-date" id="saver-date"></p>
-        </div>
-        <div class="saver-side">
-          <div class="saver-weather" id="saver-weather"></div>
-          <p class="saver-next" id="saver-next"></p>
-        </div>
+        <p class="saver-clock" id="saver-clock"></p>
+        <p class="saver-line" id="saver-line"></p>
       </div>
+      <p class="saver-credit" id="saver-credit"></p>
     </div>
 
-    <aside class="settings" id="settings" hidden>
-      <h2 data-i18n="settings"></h2>
-
-      <h3 data-i18n="language"></h3>
-      <div class="choice-row" id="lang-choices"></div>
-
-      <h3 data-i18n="clockFormat"></h3>
-      <div class="choice-row" id="hour-choices"></div>
-
-      <h3 data-i18n="margin"></h3>
-      <div class="choice-row" id="margin-choices"></div>
-      <p class="help" data-i18n="marginHint"></p>
-
-      <h3 data-i18n="city"></h3>
-      <form class="field-row" id="city-form" autocomplete="off">
-        <input type="text" id="city-input" data-nav data-i18n-placeholder="cityPlaceholder">
-        <button type="submit" data-nav data-i18n="search"></button>
-      </form>
-      <p class="status" id="city-status"></p>
-      <div class="city-results" id="city-results"></div>
-
-      <h3 data-i18n="calendarLabel"></h3>
-      <form class="field-row" id="calendar-form" autocomplete="off">
-        <input type="url" id="calendar-input" data-nav data-i18n-placeholder="calendarPlaceholder">
-        <button type="submit" data-nav data-i18n="save"></button>
-      </form>
-      <p class="status" id="calendar-status"></p>
-      <p class="help" data-i18n="calendarHint"></p>
-
-      <h3 data-i18n="newsSource"></h3>
-      <div class="choice-row" id="news-choices"></div>
-
-      <h3 data-i18n="photos"></h3>
-      <div class="choice-row" id="photo-choices"></div>
-
-      <h3 data-i18n="phoneNotes"></h3>
-      <div class="choice-row" id="phone-choices"></div>
-      <p class="help"><span data-i18n="phoneNotesHint"></span> <b id="settings-phone-address"></b></p>
-
-      <h3 data-i18n="nightMode"></h3>
-      <div class="choice-row" id="night-choices"></div>
-      <p class="help" data-i18n="nightHint"></p>
-
-      <div id="autostart-block" hidden>
-        <h3 data-i18n="autostart"></h3>
-        <div class="choice-row" id="autostart-choices"></div>
-      </div>
-
-      <div class="settings-end">
-        <button id="close-settings" data-nav data-i18n="close"></button>
-        <p class="hint" data-i18n="backHint"></p>
-      </div>
-    </aside>
-
   </div>
-
-  <div class="night-dim" aria-hidden="true"></div>
 
   <script src="vendor/qrcode.js"></script>
   <script src="calendar.js"></script>

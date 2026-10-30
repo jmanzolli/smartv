@@ -1,11 +1,14 @@
-// TV home: clock, weather, agenda, headlines, background photos and app shortcuts,
-// driven by the remote's arrows, OK, Back and Menu.
+// TV home, driven by the remote's arrows, OK, Back and Menu.
+//
+// Two layers: the home screen shows only what's worth a glance (clock, weather, the next event and
+// reminder, the apps). Down from the apps opens "Today" with the agenda, reminders and headlines.
+// Menu (☰) on an app or a note opens its options; elsewhere it opens Settings.
 //
 // Inside the Fire TV app, window.TVNative (see android/) launches apps and fetches feeds that
 // browsers would block. Opened in a plain browser the page still works, without those parts.
 
-// Apps in row order. Fire TV and Android TV package names differ, so each lists the known ones;
-// if none is installed the label is matched against the installed apps instead.
+// Apps in the default row. Fire TV and Android TV package names differ, so each lists the known
+// ones; if none is installed the label is matched against the installed apps instead.
 const APPS = [
   { name: 'Netflix',     color: '#B20710', packages: ['com.netflix.ninja'] },
   { name: 'Disney+',     color: '#0B2A6F', packages: ['com.disney.disneyplus'] },
@@ -31,13 +34,14 @@ const SAVER_AFTER = 5 * 60 * 1000;       // idle time before the screensaver
 const SAVER_RELEASE = 60 * 60 * 1000;    // then let the TV's own sleep take over
 const NIGHT_FROM = 22;                   // night mode hours
 const NIGHT_UNTIL = 7;
-const HOME_EVENTS = 3;                   // events on the home screen; the rest in the full agenda
 const AGENDA_DAYS = 7;
-
-const NTFY = 'https://ntfy.sh/';      // free relay for notes sent from the phone
+const TODAY_EVENTS = 5;                  // agenda rows in the Today panel
+const TODAY_NOTES = 4;
+const HEADLINES = 4;
+const NTFY = 'https://ntfy.sh/';         // free relay for notes sent from the phone
 const NOTES_POLL = 30 * 1000;
 const SNOOZE = 10 * 60 * 1000;
-const HOME_NOTES = 2;
+const LONG_PRESS = 700;
 
 // Colours for apps added from the installed list, which have no colour of their own.
 const TILE_COLORS = ['#3B3F8F', '#7A2E5C', '#1F6F5C', '#8A4B12', '#2E5E8A', '#5B3A8F', '#7A1C1C', '#28524A'];
@@ -45,173 +49,173 @@ const TILE_COLORS = ['#3B3F8F', '#7A2E5C', '#1F6F5C', '#8A4B12', '#2E5E8A', '#5B
 const STRINGS = {
   pt: {
     locale: 'pt-BR', label: 'Português', bing: 'pt-BR',
-    morning: 'Bom dia', afternoon: 'Boa tarde', evening: 'Boa noite',
-    settings: 'Configurações', language: 'Idioma', clockFormat: 'Formato da hora', city: 'Cidade do clima',
-    cityPlaceholder: 'Digite o nome da cidade', search: 'Buscar', close: 'Fechar',
-    backHint: 'Aperte Voltar no controle para fechar.',
+    settings: 'Configurações', language: 'Idioma', clockFormat: 'Formato da hora', margin: 'Margem da tela',
+    city: 'Cidade do clima', cityPlaceholder: 'Digite o nome da cidade', search: 'Buscar',
     searching: 'Buscando…', noResults: 'Nenhuma cidade encontrada. Confira o nome e tente de novo.',
-    pickCity: 'Escolha a cidade:', weatherError: 'Sem dados do clima agora. Nova tentativa em alguns minutos.',
-    agenda: 'Agenda', today: 'Hoje', tomorrow: 'Amanhã', allDay: 'Dia todo', now: 'Agora',
-    agendaConnect: 'Conecte sua agenda em Configurações.',
+    pickCity: 'Escolha a cidade:', weatherError: 'Sem dados do clima agora', feels: 'Sensação',
+    next: 'Próximo', inTime: 'em {t}', nothingNext: 'Nada nos próximos 7 dias',
+    agenda: 'Agenda', today: 'Hoje', tomorrow: 'Amanhã', allDay: 'Dia todo', now: 'Agora', until: 'até',
+    agendaConnect: 'Conecte sua agenda em Configurações ou pelo celular.',
     agendaEmpty: 'Nada marcado para hoje e amanhã.',
     agendaError: 'Não consegui ler a agenda. Confira o endereço em Configurações.',
     calendarLabel: 'Agenda (endereço secreto iCal)', calendarPlaceholder: 'Cole o endereço que termina em .ics',
-    save: 'Salvar', calendarChecking: 'Lendo a agenda…', calendarSaved: 'Agenda salva.',
-    calendarCleared: 'Agenda desconectada.',
-    calendarHint: 'No Google Agenda, pelo computador: Configurações → sua agenda → Endereço secreto no formato iCal. Dica: o app Amazon Fire TV no celular tem um teclado para colar o endereço.',
-    news: 'Manchetes', newsSource: 'Fonte das manchetes', newsAuto: 'Seguir o idioma',
-    newsError: 'Sem manchetes agora. Nova tentativa em alguns minutos.',
-    margin: 'Margem da tela', marginHint: 'Se as bordas ficarem cortadas na TV, aumente a margem.',
+    save: 'Salvar', calendarChecking: 'Lendo a agenda…', calendarSaved: 'Agenda salva.', calendarCleared: 'Agenda desconectada.',
+    calendarHint: 'No Google Agenda, pelo computador: Configurações → sua agenda → Endereço secreto no formato iCal. Mais fácil: mande “agenda: <endereço>” pelo celular (veja abaixo).',
+    news: 'Notícias', newsSource: 'Notícias', newsAuto: 'Seguir o idioma',
+    newsError: 'Sem notícias agora. Nova tentativa em alguns minutos.',
     photos: 'Fotos de fundo', autostart: 'Abrir ao ligar a TV', on: 'Ligado', off: 'Desligado',
-    feels: 'Sensação de', fullAgenda: 'Ver agenda completa', nextDays: 'Próximos 7 dias', until: 'até',
-    back: 'Voltar', agendaHint: 'Setas para percorrer · Voltar para fechar',
-    nightBadge: 'Modo noturno até 7:00', nightMode: 'Modo noturno',
-    nightHint: 'Das 22:00 às 7:00 a tela escurece e as manchetes somem.',
-    organize: 'Organizar apps', organizeHint: 'Escolha um app e use os botões para mudar de lugar.',
-    moveLeft: 'Mover para a esquerda', moveRight: 'Mover para a direita', removeApp: 'Remover da fileira',
-    addApp: 'Adicionar', addTitle: 'Adicionar app', addHint: 'Apps instalados nesta TV. OK adiciona ou tira da fileira.',
-    inRow: 'Na fileira', done: 'Pronto', position: 'posição {n} de {total}', addOnlyTv: 'A lista de apps só aparece na TV.',
-    organizeHow: 'Para chegar aqui: segure OK em qualquer app da tela inicial, ou escolha o bloco + no fim da fileira.',
-    reminders: 'Lembretes', notesKicker: 'Notas e lembretes', newNote: 'Nova nota', newShort: 'Nova',
-    noteWhat: 'O que lembrar?', notePlaceholder: 'Ex.: dentista amanhã 9h', remindWhen: 'Lembrar com aviso na tela',
-    whenNone: 'Sem aviso', whenHalf: 'Em 30 min', whenHour: 'Em 1 hora', whenTonight: 'Hoje, 20:00', whenMorning: 'Amanhã, 8:00',
-    cancel: 'Cancelar', noteDone: 'Feito', snooze: 'Adiar 10 min', reminder: 'Lembrete', fromPhone: 'Nota do celular',
-    deleteNote: 'Apagar nota', notesEmpty: 'Nenhuma nota. Crie uma aqui ou mande do celular.',
-    notesHint: 'OK marca como feita · Direita leva à lixeira · Voltar fecha. As feitas saem da lista no dia seguinte.',
-    phoneTitle: 'Mande notas do celular', phoneNotes: 'Notas pelo celular',
-    phoneHint: 'Aponte a câmera para o código, ou abra o endereço no celular, e mande uma mensagem. Um horário no texto vira aviso: “dentista amanhã 9h”.',
-    phoneNotesHint: 'Usa o serviço gratuito ntfy.sh. Quem souber o endereço pode mandar notas para a TV. Endereço:',
-    tomorrowWords: 'amanhã|amanha', todayWords: 'hoje', atWords: 'às|as|a',
+    nightMode: 'Modo noturno', nightBadge: 'Modo noturno até 7:00', nightRange: '22:00–7:00',
+    groupGeneral: 'Geral', groupInfo: 'Informações', groupScreen: 'Tela', connected: 'Conectada', notConnected: 'Não conectada',
+    back: 'Voltar', done: 'Pronto', cancel: 'Cancelar',
+    todayHandle: 'Hoje · agenda, lembretes e notícias',
+    nextDays: 'Próximos 7 dias', eventsCount: '{n} eventos', weekEmpty: 'Nada marcado nos próximos 7 dias.',
+    weekHint: '← → muda de dia · ↑ ↓ percorre os eventos · Voltar fecha',
+    open: 'Abrir', move: 'Mover', removeApp: 'Remover da fileira', addApp: 'Adicionar app…',
+    moveHint: 'Use <b>← →</b> para mover · <b>OK</b> para soltar',
+    addTitle: 'Adicionar app', addCount: '{n} instalados · OK põe ou tira da fileira', addOnlyTv: 'A lista de apps só aparece na TV.',
     install: 'Instalar',
+    reminders: 'Lembretes', newNote: 'Nova nota', notesPending: '{n} pendentes', moreNotes: '+{n}',
+    noteWhat: 'O que lembrar?', notePlaceholder: 'Ex.: dentista amanhã 9h', remindWhen: 'Avisar',
+    whenNone: 'Sem aviso', whenHalf: 'Em 30 min', whenHour: 'Em 1 hora', whenTonight: 'Hoje, 20:00', whenMorning: 'Amanhã, 8:00',
+    noteDone: 'Feito', snooze: 'Adiar 10 min', reminder: 'Lembrete', fromPhone: 'Do celular', fromPhoneShort: 'Do celular:',
+    markDone: 'Marcar como feita', markUndone: 'Desmarcar', deleteNote: 'Apagar',
+    notesEmpty: 'Nenhuma nota. Crie uma aqui ou mande do celular.',
+    notesHint: 'OK marca como feita · ☰ mais opções · Voltar fecha',
+    phoneTitle: 'Mande do celular', phoneNotes: 'Notas pelo celular',
+    phoneHint: '“dentista amanhã 9h” vira aviso na hora.',
+    phoneSetup: 'Configurar pelo celular',
+    phoneSetupHint: 'Mande “agenda: <endereço iCal>” ou “cidade: <nome>” para:',
+    agendaSetPhone: 'Agenda conectada pelo celular', citySetPhone: 'Cidade do clima mudou para',
+    tomorrowWords: 'amanhã|amanha', todayWords: 'hoje', atWords: 'às|as|a',
     wx: ['Céu limpo', 'Quase limpo', 'Parcialmente nublado', 'Nublado', 'Neblina', 'Garoa', 'Chuva',
          'Chuva congelante', 'Neve', 'Pancadas de chuva', 'Pancadas de neve', 'Tempestade'],
   },
   en: {
     locale: 'en-CA', label: 'English', bing: 'en-CA',
-    morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening',
-    settings: 'Settings', language: 'Language', clockFormat: 'Clock format', city: 'Weather city',
-    cityPlaceholder: 'Type a city name', search: 'Search', close: 'Close',
-    backHint: 'Press Back on the remote to close.',
+    settings: 'Settings', language: 'Language', clockFormat: 'Clock format', margin: 'Screen margin',
+    city: 'Weather city', cityPlaceholder: 'Type a city name', search: 'Search',
     searching: 'Searching…', noResults: 'No city found. Check the spelling and try again.',
-    pickCity: 'Choose your city:', weatherError: 'No weather data right now. Trying again in a few minutes.',
-    agenda: 'Calendar', today: 'Today', tomorrow: 'Tomorrow', allDay: 'All day', now: 'Now',
-    agendaConnect: 'Connect your calendar in Settings.',
+    pickCity: 'Choose your city:', weatherError: 'No weather data right now', feels: 'Feels like',
+    next: 'Next', inTime: 'in {t}', nothingNext: 'Nothing in the next 7 days',
+    agenda: 'Calendar', today: 'Today', tomorrow: 'Tomorrow', allDay: 'All day', now: 'Now', until: 'until',
+    agendaConnect: 'Connect your calendar in Settings or from your phone.',
     agendaEmpty: 'Nothing scheduled today or tomorrow.',
     agendaError: 'Couldn’t read the calendar. Check the address in Settings.',
     calendarLabel: 'Calendar (secret iCal address)', calendarPlaceholder: 'Paste the address ending in .ics',
-    save: 'Save', calendarChecking: 'Reading the calendar…', calendarSaved: 'Calendar saved.',
-    calendarCleared: 'Calendar disconnected.',
-    calendarHint: 'In Google Calendar on a computer: Settings → your calendar → Secret address in iCal format. Tip: the Amazon Fire TV phone app has a keyboard for pasting it.',
-    news: 'Headlines', newsSource: 'Headline source', newsAuto: 'Match the language',
+    save: 'Save', calendarChecking: 'Reading the calendar…', calendarSaved: 'Calendar saved.', calendarCleared: 'Calendar disconnected.',
+    calendarHint: 'In Google Calendar on a computer: Settings → your calendar → Secret address in iCal format. Easier: send “calendar: <address>” from your phone (see below).',
+    news: 'News', newsSource: 'News', newsAuto: 'Match the language',
     newsError: 'No headlines right now. Trying again in a few minutes.',
-    margin: 'Screen margin', marginHint: 'If the edges are cut off on the TV, increase the margin.',
     photos: 'Background photos', autostart: 'Open when the TV turns on', on: 'On', off: 'Off',
-    feels: 'Feels like', fullAgenda: 'See full calendar', nextDays: 'Next 7 days', until: 'until',
-    back: 'Back', agendaHint: 'Arrows to browse · Back to close',
-    nightBadge: 'Night mode until 7:00', nightMode: 'Night mode',
-    nightHint: 'From 10 PM to 7 AM the screen dims and headlines are hidden.',
-    organize: 'Arrange apps', organizeHint: 'Pick an app and use the buttons to move it.',
-    moveLeft: 'Move left', moveRight: 'Move right', removeApp: 'Remove from row',
-    addApp: 'Add', addTitle: 'Add an app', addHint: 'Apps installed on this TV. OK adds or removes it from the row.',
-    inRow: 'In row', done: 'Done', position: 'position {n} of {total}', addOnlyTv: 'The app list only shows on the TV.',
-    organizeHow: 'To get here: hold OK on any app on the home screen, or pick the + tile at the end of the row.',
-    reminders: 'Reminders', notesKicker: 'Notes and reminders', newNote: 'New note', newShort: 'New',
-    noteWhat: 'What to remember?', notePlaceholder: 'E.g. dentist tomorrow 9:00', remindWhen: 'Remind me on screen',
-    whenNone: 'No reminder', whenHalf: 'In 30 min', whenHour: 'In 1 hour', whenTonight: 'Tonight, 8 PM', whenMorning: 'Tomorrow, 8 AM',
-    cancel: 'Cancel', noteDone: 'Done', snooze: 'Snooze 10 min', reminder: 'Reminder', fromPhone: 'Note from your phone',
-    deleteNote: 'Delete note', notesEmpty: 'No notes. Add one here or send one from your phone.',
-    notesHint: 'OK marks it done · Right goes to the bin · Back closes. Done notes leave the list the next day.',
-    phoneTitle: 'Send notes from your phone', phoneNotes: 'Notes from the phone',
-    phoneHint: 'Point the camera at the code, or open the address on your phone, and send a message. A time in the text becomes a reminder: “dentist tomorrow 9:00”.',
-    phoneNotesHint: 'Uses the free ntfy.sh service. Anyone who knows the address can send notes to the TV. Address:',
-    tomorrowWords: 'tomorrow', todayWords: 'today', atWords: 'at',
+    nightMode: 'Night mode', nightBadge: 'Night mode until 7:00', nightRange: '10 PM–7 AM',
+    groupGeneral: 'General', groupInfo: 'Information', groupScreen: 'Screen', connected: 'Connected', notConnected: 'Not connected',
+    back: 'Back', done: 'Done', cancel: 'Cancel',
+    todayHandle: 'Today · calendar, reminders and news',
+    nextDays: 'Next 7 days', eventsCount: '{n} events', weekEmpty: 'Nothing scheduled in the next 7 days.',
+    weekHint: '← → changes day · ↑ ↓ goes through events · Back closes',
+    open: 'Open', move: 'Move', removeApp: 'Remove from row', addApp: 'Add an app…',
+    moveHint: 'Use <b>← →</b> to move · <b>OK</b> to drop',
+    addTitle: 'Add an app', addCount: '{n} installed · OK adds or removes it', addOnlyTv: 'The app list only shows on the TV.',
     install: 'Install',
-    wx: ['Clear sky', 'Mostly clear', 'Partly cloudy', 'Overcast', 'Fog', 'Drizzle', 'Rain',
-         'Freezing rain', 'Snow', 'Rain showers', 'Snow showers', 'Thunderstorm'],
+    reminders: 'Reminders', newNote: 'New note', notesPending: '{n} pending', moreNotes: '+{n}',
+    noteWhat: 'What to remember?', notePlaceholder: 'E.g. dentist tomorrow 9:00', remindWhen: 'Remind me',
+    whenNone: 'No reminder', whenHalf: 'In 30 min', whenHour: 'In 1 hour', whenTonight: 'Tonight, 8 PM', whenMorning: 'Tomorrow, 8 AM',
+    noteDone: 'Done', snooze: 'Snooze 10 min', reminder: 'Reminder', fromPhone: 'From your phone', fromPhoneShort: 'From your phone:',
+    markDone: 'Mark as done', markUndone: 'Mark as not done', deleteNote: 'Delete',
+    notesEmpty: 'No notes. Add one here or send one from your phone.',
+    notesHint: 'OK marks it done · ☰ more options · Back closes',
+    phoneTitle: 'Send from your phone', phoneNotes: 'Notes from the phone',
+    phoneHint: '“dentist tomorrow 9:00” becomes a reminder.',
+    phoneSetup: 'Set up from your phone',
+    phoneSetupHint: 'Send “calendar: <iCal address>” or “city: <name>” to:',
+    agendaSetPhone: 'Calendar connected from your phone', citySetPhone: 'Weather city changed to',
+    tomorrowWords: 'tomorrow', todayWords: 'today', atWords: 'at',
+    wx: ['Clear sky', 'Mostly clear', 'Partly cloudy', 'Cloudy', 'Fog', 'Drizzle', 'Rain',
+         'Freezing rain', 'Snow', 'Showers', 'Snow showers', 'Thunderstorm'],
   },
   fr: {
     locale: 'fr-CA', label: 'Français', bing: 'fr-CA',
-    morning: 'Bonjour', afternoon: 'Bon après-midi', evening: 'Bonsoir',
-    settings: 'Paramètres', language: 'Langue', clockFormat: 'Format de l’heure', city: 'Ville pour la météo',
-    cityPlaceholder: 'Tapez le nom de la ville', search: 'Chercher', close: 'Fermer',
-    backHint: 'Appuyez sur Retour pour fermer.',
+    settings: 'Paramètres', language: 'Langue', clockFormat: 'Format de l’heure', margin: 'Marge de l’écran',
+    city: 'Ville de la météo', cityPlaceholder: 'Tapez le nom de la ville', search: 'Chercher',
     searching: 'Recherche…', noResults: 'Aucune ville trouvée. Vérifiez le nom et réessayez.',
-    pickCity: 'Choisissez la ville :', weatherError: 'Pas de données météo pour l’instant. Nouvel essai dans quelques minutes.',
-    agenda: 'Agenda', today: 'Aujourd’hui', tomorrow: 'Demain', allDay: 'Toute la journée', now: 'En cours',
-    agendaConnect: 'Connectez votre agenda dans Paramètres.',
+    pickCity: 'Choisissez la ville :', weatherError: 'Pas de météo pour le moment', feels: 'Ressenti',
+    next: 'Prochain', inTime: 'dans {t}', nothingNext: 'Rien dans les 7 prochains jours',
+    agenda: 'Agenda', today: 'Aujourd’hui', tomorrow: 'Demain', allDay: 'Toute la journée', now: 'Maintenant', until: 'jusqu’à',
+    agendaConnect: 'Connectez votre agenda dans Paramètres ou du téléphone.',
     agendaEmpty: 'Rien de prévu aujourd’hui ni demain.',
     agendaError: 'Impossible de lire l’agenda. Vérifiez l’adresse dans Paramètres.',
     calendarLabel: 'Agenda (adresse secrète iCal)', calendarPlaceholder: 'Collez l’adresse qui finit par .ics',
-    save: 'Enregistrer', calendarChecking: 'Lecture de l’agenda…', calendarSaved: 'Agenda enregistré.',
-    calendarCleared: 'Agenda déconnecté.',
-    calendarHint: 'Dans Google Agenda sur ordinateur : Paramètres → votre agenda → Adresse secrète au format iCal. Astuce : l’app Amazon Fire TV sur téléphone a un clavier pour la coller.',
-    news: 'Manchettes', newsSource: 'Source des manchettes', newsAuto: 'Selon la langue',
-    newsError: 'Pas de manchettes pour l’instant. Nouvel essai dans quelques minutes.',
-    margin: "Marge de l'écran", marginHint: 'Si les bords sont coupés sur la télé, augmentez la marge.',
+    save: 'Enregistrer', calendarChecking: 'Lecture de l’agenda…', calendarSaved: 'Agenda enregistré.', calendarCleared: 'Agenda déconnecté.',
+    calendarHint: 'Dans Google Agenda, sur ordinateur : Paramètres → votre agenda → Adresse secrète au format iCal. Plus simple : envoyez « agenda: <adresse> » du téléphone (voir plus bas).',
+    news: 'Actualités', newsSource: 'Actualités', newsAuto: 'Selon la langue',
+    newsError: 'Pas de manchettes pour le moment. Nouvel essai dans quelques minutes.',
     photos: 'Photos en arrière-plan', autostart: 'Ouvrir au démarrage de la télé', on: 'Activé', off: 'Désactivé',
-    feels: 'Ressenti', fullAgenda: 'Voir tout l’agenda', nextDays: '7 prochains jours', until: 'jusqu’à',
-    back: 'Retour', agendaHint: 'Flèches pour parcourir · Retour pour fermer',
-    nightBadge: 'Mode nuit jusqu’à 7 h', nightMode: 'Mode nuit',
-    nightHint: 'De 22 h à 7 h, l’écran s’assombrit et les manchettes disparaissent.',
-    organize: 'Organiser les applis', organizeHint: 'Choisissez une appli et déplacez-la avec les boutons.',
-    moveLeft: 'Déplacer à gauche', moveRight: 'Déplacer à droite', removeApp: 'Retirer de la rangée',
-    addApp: 'Ajouter', addTitle: 'Ajouter une appli', addHint: 'Applis installées sur cette télé. OK l’ajoute ou la retire de la rangée.',
-    inRow: 'Dans la rangée', done: 'Terminé', position: 'position {n} sur {total}', addOnlyTv: 'La liste des applis s’affiche seulement sur la télé.',
-    organizeHow: 'Pour venir ici : maintenez OK sur une appli de l’accueil, ou choisissez la tuile + au bout de la rangée.',
-    reminders: 'Rappels', notesKicker: 'Notes et rappels', newNote: 'Nouvelle note', newShort: 'Nouvelle',
-    noteWhat: 'Quoi retenir ?', notePlaceholder: 'Ex. : dentiste demain 9h', remindWhen: 'Me le rappeler à l’écran',
-    whenNone: 'Sans rappel', whenHalf: 'Dans 30 min', whenHour: 'Dans 1 heure', whenTonight: 'Ce soir, 20 h', whenMorning: 'Demain, 8 h',
-    cancel: 'Annuler', noteDone: 'Fait', snooze: 'Reporter 10 min', reminder: 'Rappel', fromPhone: 'Note du téléphone',
-    deleteNote: 'Supprimer la note', notesEmpty: 'Aucune note. Créez-en une ici ou envoyez-la du téléphone.',
-    notesHint: 'OK la marque comme faite · Droite mène à la corbeille · Retour ferme. Les notes faites partent le lendemain.',
-    phoneTitle: 'Envoyez des notes du téléphone', phoneNotes: 'Notes du téléphone',
-    phoneHint: 'Visez le code avec l’appareil photo, ou ouvrez l’adresse sur le téléphone, et envoyez un message. Une heure dans le texte devient un rappel : « dentiste demain 9h ».',
-    phoneNotesHint: 'Utilise le service gratuit ntfy.sh. Toute personne qui connaît l’adresse peut envoyer des notes à la télé. Adresse :',
-    tomorrowWords: 'demain', todayWords: 'aujourd’hui|aujourd\'hui', atWords: 'à|a',
+    nightMode: 'Mode nuit', nightBadge: 'Mode nuit jusqu’à 7 h', nightRange: '22 h – 7 h',
+    groupGeneral: 'Général', groupInfo: 'Informations', groupScreen: 'Écran', connected: 'Connecté', notConnected: 'Non connecté',
+    back: 'Retour', done: 'Terminé', cancel: 'Annuler',
+    todayHandle: 'Aujourd’hui · agenda, rappels et actualités',
+    nextDays: '7 prochains jours', eventsCount: '{n} événements', weekEmpty: 'Rien de prévu dans les 7 prochains jours.',
+    weekHint: '← → change de jour · ↑ ↓ parcourt les événements · Retour ferme',
+    open: 'Ouvrir', move: 'Déplacer', removeApp: 'Retirer de la rangée', addApp: 'Ajouter une appli…',
+    moveHint: '<b>← →</b> pour déplacer · <b>OK</b> pour déposer',
+    addTitle: 'Ajouter une appli', addCount: '{n} installées · OK l’ajoute ou la retire', addOnlyTv: 'La liste des applis s’affiche seulement sur la télé.',
     install: 'Installer',
-    wx: ['Ciel dégagé', 'Plutôt dégagé', 'Partiellement nuageux', 'Couvert', 'Brouillard', 'Bruine', 'Pluie',
+    reminders: 'Rappels', newNote: 'Nouvelle note', notesPending: '{n} en attente', moreNotes: '+{n}',
+    noteWhat: 'Quoi retenir ?', notePlaceholder: 'Ex. : dentiste demain 9h', remindWhen: 'Rappel',
+    whenNone: 'Sans rappel', whenHalf: 'Dans 30 min', whenHour: 'Dans 1 heure', whenTonight: 'Ce soir, 20 h', whenMorning: 'Demain, 8 h',
+    noteDone: 'Fait', snooze: 'Reporter 10 min', reminder: 'Rappel', fromPhone: 'Du téléphone', fromPhoneShort: 'Du téléphone :',
+    markDone: 'Marquer comme fait', markUndone: 'Marquer comme à faire', deleteNote: 'Supprimer',
+    notesEmpty: 'Aucune note. Créez-en une ici ou envoyez-la du téléphone.',
+    notesHint: 'OK la marque comme faite · ☰ plus d’options · Retour ferme',
+    phoneTitle: 'Envoyez du téléphone', phoneNotes: 'Notes du téléphone',
+    phoneHint: '« dentiste demain 9h » devient un rappel.',
+    phoneSetup: 'Configurer du téléphone',
+    phoneSetupHint: 'Envoyez « agenda: <adresse iCal> » ou « ville: <nom> » à :',
+    agendaSetPhone: 'Agenda connecté du téléphone', citySetPhone: 'Ville de la météo changée pour',
+    tomorrowWords: 'demain', todayWords: 'aujourd’hui|aujourd\'hui', atWords: 'à|a',
+    wx: ['Ciel dégagé', 'Plutôt dégagé', 'Partiellement nuageux', 'Nuageux', 'Brouillard', 'Bruine', 'Pluie',
          'Pluie verglaçante', 'Neige', 'Averses', 'Averses de neige', 'Orage'],
   },
   es: {
     locale: 'es-ES', label: 'Español', bing: 'es-ES',
-    morning: 'Buenos días', afternoon: 'Buenas tardes', evening: 'Buenas noches',
-    settings: 'Ajustes', language: 'Idioma', clockFormat: 'Formato de hora', city: 'Ciudad del clima',
-    cityPlaceholder: 'Escribe el nombre de la ciudad', search: 'Buscar', close: 'Cerrar',
-    backHint: 'Pulsa Atrás en el mando para cerrar.',
+    settings: 'Ajustes', language: 'Idioma', clockFormat: 'Formato de hora', margin: 'Margen de la pantalla',
+    city: 'Ciudad del tiempo', cityPlaceholder: 'Escribe el nombre de la ciudad', search: 'Buscar',
     searching: 'Buscando…', noResults: 'No se encontró la ciudad. Revisa el nombre e inténtalo de nuevo.',
-    pickCity: 'Elige la ciudad:', weatherError: 'Sin datos del clima ahora. Nuevo intento en unos minutos.',
-    agenda: 'Agenda', today: 'Hoy', tomorrow: 'Mañana', allDay: 'Todo el día', now: 'Ahora',
-    agendaConnect: 'Conecta tu agenda en Ajustes.',
-    agendaEmpty: 'Nada programado para hoy ni mañana.',
-    agendaError: 'No se pudo leer la agenda. Revisa la dirección en Ajustes.',
+    pickCity: 'Elige la ciudad:', weatherError: 'Sin datos del tiempo ahora', feels: 'Sensación',
+    next: 'Próximo', inTime: 'en {t}', nothingNext: 'Nada en los próximos 7 días',
+    agenda: 'Agenda', today: 'Hoy', tomorrow: 'Mañana', allDay: 'Todo el día', now: 'Ahora', until: 'hasta',
+    agendaConnect: 'Conecta tu agenda en Ajustes o desde el móvil.',
+    agendaEmpty: 'Nada previsto para hoy ni mañana.',
+    agendaError: 'No pude leer la agenda. Revisa la dirección en Ajustes.',
     calendarLabel: 'Agenda (dirección secreta iCal)', calendarPlaceholder: 'Pega la dirección que termina en .ics',
-    save: 'Guardar', calendarChecking: 'Leyendo la agenda…', calendarSaved: 'Agenda guardada.',
-    calendarCleared: 'Agenda desconectada.',
-    calendarHint: 'En Google Calendar desde el ordenador: Configuración → tu calendario → Dirección secreta en formato iCal. Consejo: la app Amazon Fire TV del móvil tiene un teclado para pegarla.',
-    news: 'Titulares', newsSource: 'Fuente de titulares', newsAuto: 'Según el idioma',
+    save: 'Guardar', calendarChecking: 'Leyendo la agenda…', calendarSaved: 'Agenda guardada.', calendarCleared: 'Agenda desconectada.',
+    calendarHint: 'En Google Calendar, desde el ordenador: Configuración → tu calendario → Dirección secreta en formato iCal. Más fácil: manda «agenda: <dirección>» desde el móvil (mira abajo).',
+    news: 'Noticias', newsSource: 'Noticias', newsAuto: 'Según el idioma',
     newsError: 'Sin titulares ahora. Nuevo intento en unos minutos.',
-    margin: 'Margen de la pantalla', marginHint: 'Si los bordes se ven cortados en la tele, aumenta el margen.',
     photos: 'Fotos de fondo', autostart: 'Abrir al encender la tele', on: 'Activado', off: 'Desactivado',
-    feels: 'Sensación de', fullAgenda: 'Ver agenda completa', nextDays: 'Próximos 7 días', until: 'hasta',
-    back: 'Volver', agendaHint: 'Flechas para recorrer · Atrás para cerrar',
-    nightBadge: 'Modo nocturno hasta las 7:00', nightMode: 'Modo nocturno',
-    nightHint: 'De 22:00 a 7:00 la pantalla se oscurece y los titulares desaparecen.',
-    organize: 'Ordenar apps', organizeHint: 'Elige una app y usa los botones para moverla.',
-    moveLeft: 'Mover a la izquierda', moveRight: 'Mover a la derecha', removeApp: 'Quitar de la fila',
-    addApp: 'Añadir', addTitle: 'Añadir app', addHint: 'Apps instaladas en esta tele. OK la añade o la quita de la fila.',
-    inRow: 'En la fila', done: 'Listo', position: 'posición {n} de {total}', addOnlyTv: 'La lista de apps solo aparece en la tele.',
-    organizeHow: 'Para llegar aquí: mantén OK en cualquier app de la pantalla de inicio, o elige el bloque + al final de la fila.',
-    reminders: 'Recordatorios', notesKicker: 'Notas y recordatorios', newNote: 'Nueva nota', newShort: 'Nueva',
-    noteWhat: '¿Qué recordar?', notePlaceholder: 'Ej.: dentista mañana 9h', remindWhen: 'Avisarme en pantalla',
-    whenNone: 'Sin aviso', whenHalf: 'En 30 min', whenHour: 'En 1 hora', whenTonight: 'Hoy, 20:00', whenMorning: 'Mañana, 8:00',
-    cancel: 'Cancelar', noteDone: 'Hecho', snooze: 'Posponer 10 min', reminder: 'Recordatorio', fromPhone: 'Nota del móvil',
-    deleteNote: 'Borrar nota', notesEmpty: 'No hay notas. Crea una aquí o mándala desde el móvil.',
-    notesHint: 'OK la marca como hecha · Derecha lleva a la papelera · Atrás cierra. Las hechas salen de la lista al día siguiente.',
-    phoneTitle: 'Manda notas desde el móvil', phoneNotes: 'Notas desde el móvil',
-    phoneHint: 'Apunta la cámara al código, o abre la dirección en el móvil, y manda un mensaje. Una hora en el texto se vuelve aviso: «dentista mañana 9h».',
-    phoneNotesHint: 'Usa el servicio gratuito ntfy.sh. Quien conozca la dirección puede mandar notas a la tele. Dirección:',
-    tomorrowWords: 'mañana|manana', todayWords: 'hoy', atWords: 'a las|a',
+    nightMode: 'Modo nocturno', nightBadge: 'Modo nocturno hasta las 7:00', nightRange: '22:00–7:00',
+    groupGeneral: 'General', groupInfo: 'Información', groupScreen: 'Pantalla', connected: 'Conectada', notConnected: 'Sin conectar',
+    back: 'Volver', done: 'Listo', cancel: 'Cancelar',
+    todayHandle: 'Hoy · agenda, recordatorios y noticias',
+    nextDays: 'Próximos 7 días', eventsCount: '{n} eventos', weekEmpty: 'Nada previsto en los próximos 7 días.',
+    weekHint: '← → cambia de día · ↑ ↓ recorre los eventos · Atrás cierra',
+    open: 'Abrir', move: 'Mover', removeApp: 'Quitar de la fila', addApp: 'Añadir app…',
+    moveHint: 'Usa <b>← →</b> para mover · <b>OK</b> para soltar',
+    addTitle: 'Añadir app', addCount: '{n} instaladas · OK la añade o la quita', addOnlyTv: 'La lista de apps solo aparece en la tele.',
     install: 'Instalar',
+    reminders: 'Recordatorios', newNote: 'Nueva nota', notesPending: '{n} pendientes', moreNotes: '+{n}',
+    noteWhat: '¿Qué recordar?', notePlaceholder: 'Ej.: dentista mañana 9h', remindWhen: 'Avisar',
+    whenNone: 'Sin aviso', whenHalf: 'En 30 min', whenHour: 'En 1 hora', whenTonight: 'Hoy, 20:00', whenMorning: 'Mañana, 8:00',
+    noteDone: 'Hecho', snooze: 'Posponer 10 min', reminder: 'Recordatorio', fromPhone: 'Del móvil', fromPhoneShort: 'Desde el móvil:',
+    markDone: 'Marcar como hecha', markUndone: 'Desmarcar', deleteNote: 'Borrar',
+    notesEmpty: 'No hay notas. Crea una aquí o mándala desde el móvil.',
+    notesHint: 'OK la marca como hecha · ☰ más opciones · Atrás cierra',
+    phoneTitle: 'Mándalas desde el móvil', phoneNotes: 'Notas desde el móvil',
+    phoneHint: '«dentista mañana 9h» se vuelve un aviso.',
+    phoneSetup: 'Configurar desde el móvil',
+    phoneSetupHint: 'Manda «agenda: <dirección iCal>» o «ciudad: <nombre>» a:',
+    agendaSetPhone: 'Agenda conectada desde el móvil', citySetPhone: 'La ciudad del tiempo ahora es',
+    tomorrowWords: 'mañana|manana', todayWords: 'hoy', atWords: 'a las|a',
     wx: ['Despejado', 'Mayormente despejado', 'Parcialmente nublado', 'Nublado', 'Niebla', 'Llovizna', 'Lluvia',
          'Lluvia helada', 'Nieve', 'Chubascos', 'Chubascos de nieve', 'Tormenta'],
   },
@@ -249,6 +253,7 @@ const t = (key) => STRINGS[prefs.lang][key];
 const $ = (id) => document.getElementById(id);
 
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fill = (s, n) => s.replace('{n}', n);
 
 // ---------- Native bridge ----------
 
@@ -282,79 +287,21 @@ function fetchText(url) {
 // ---------- Fit the 1920×1080 stage to any screen ----------
 
 const MARGINS = [0, 2.5, 5, 7.5]; // percent of the screen left empty on each side
+let stageScale = 1;
 
 // The app also calls this when the WebView changes size, since a TV may report its real size late.
 function fitStage() {
   const w = document.documentElement.clientWidth || window.innerWidth;
   const h = document.documentElement.clientHeight || window.innerHeight;
   if (!w || !h) return;
-  const scale = Math.min(w / 1920, h / 1080) * (1 - prefs.margin / 50);
-  $('stage').style.transform = `translate(-50%, -50%) scale(${scale})`;
+  stageScale = Math.min(w / 1920, h / 1080) * (1 - prefs.margin / 50);
+  $('stage').style.transform = `translate(-50%, -50%) scale(${stageScale})`;
 }
 window.tvFit = fitStage;
 window.addEventListener('resize', fitStage);
 window.addEventListener('load', fitStage);
 
-// ---------- Clock, date, greeting, sky ----------
-
-function skyFor(hour) {
-  if (hour >= 5 && hour < 7) return 'dawn';
-  if (hour >= 7 && hour < 17) return 'day';
-  if (hour >= 17 && hour < 19) return 'dusk';
-  return 'night';
-}
-
-function formatTime(date) {
-  return date.toLocaleTimeString(t('locale'), { hour: 'numeric', minute: '2-digit', hour12: prefs.hour12 });
-}
-
-function renderClock() {
-  const now = new Date();
-  const h = now.getHours();
-
-  let hh = h;
-  let ampm = '';
-  if (prefs.hour12) {
-    ampm = h < 12 ? 'AM' : 'PM';
-    hh = h % 12 || 12;
-  }
-  const digits = (prefs.hour12 ? String(hh) : String(hh).padStart(2, '0')) + ':' + String(now.getMinutes()).padStart(2, '0');
-  $('clock').innerHTML = [...digits]
-    .map((c) => (c === ':' ? '<span class="colon">:</span>' : `<span class="digit">${c}</span>`))
-    .join('') + (ampm ? `<span class="ampm">${ampm}</span>` : '');
-
-  $('date').textContent = now.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' });
-  $('greeting').textContent = h >= 5 && h < 12 ? t('morning') : h >= 12 && h < 18 ? t('afternoon') : t('evening');
-
-  const sky = 'sky-' + skyFor(h);
-  if (!document.body.classList.contains(sky)) {
-    document.body.classList.remove('sky-dawn', 'sky-day', 'sky-dusk', 'sky-night');
-    document.body.classList.add(sky);
-  }
-}
-
-function everyMinute() {
-  renderClock();
-  renderAgenda();
-  applyNight();
-  if (saverOn) renderSaver();
-}
-
-// ---------- Night mode (dims the screen and hides the headlines) ----------
-
-function applyNight() {
-  const h = new Date().getHours();
-  const on = prefs.night && (h >= NIGHT_FROM || h < NIGHT_UNTIL);
-  document.body.classList.toggle('night', on);
-}
-
-function startClock() {
-  everyMinute();
-  // Tick on the minute boundary so the display never lags.
-  setTimeout(() => { everyMinute(); setInterval(everyMinute, 60000); }, 60000 - (Date.now() % 60000) + 50);
-}
-
-// ---------- Weather (Open-Meteo, no key needed) ----------
+// ---------- Icons ----------
 
 const ICONS = {
   sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>',
@@ -365,7 +312,97 @@ const ICONS = {
   rain: '<path d="M7 14h10.5a4 4 0 0 0 .5-8 6 6 0 0 0-11.6 1.6A3.2 3.2 0 0 0 7 14Z"/><path d="M8.5 17l-1 3M12.5 17l-1 3M16.5 17l-1 3"/>',
   snow: '<path d="M7 14h10.5a4 4 0 0 0 .5-8 6 6 0 0 0-11.6 1.6A3.2 3.2 0 0 0 7 14Z"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 21.5h.01M14 21.5h.01" stroke-width="2.6"/>',
   storm: '<path d="M7 14h10.5a4 4 0 0 0 .5-8 6 6 0 0 0-11.6 1.6A3.2 3.2 0 0 0 7 14Z"/><path d="M12.5 14.5 10 18.5h3.5L11 22.5"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z"/><path d="M10 21h4"/>',
+  phone: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  left: '<path d="M15 5l-7 7 7 7"/>',
+  right: '<path d="M9 5l7 7-7 7"/>',
 };
+const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
+
+// ---------- Dates ----------
+
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+function formatTime(date) {
+  return date.toLocaleTimeString(t('locale'), { hour: 'numeric', minute: '2-digit', hour12: prefs.hour12 });
+}
+
+// "Hoje", "Amanhã" or a short weekday ("Dom.").
+function shortDay(date) {
+  const today = startOfDay(new Date());
+  if (date < addDays(today, 1)) return t('today');
+  if (date < addDays(today, 2)) return t('tomorrow');
+  return capitalize(date.toLocaleDateString(t('locale'), { weekday: 'short' }));
+}
+
+function longDate(date) {
+  return date.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+// "em 1 h 40 min"
+function inTime(ms) {
+  const mins = Math.max(1, Math.round(ms / 60000));
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return t('inTime').replace('{t}', (h ? `${h} h` : '') + (h && m ? ' ' : '') + (m || !h ? `${m} min` : ''));
+}
+
+// ---------- Clock and sky ----------
+
+function skyFor(hour) {
+  if (hour >= 5 && hour < 7) return 'dawn';
+  if (hour >= 7 && hour < 17) return 'day';
+  if (hour >= 17 && hour < 19) return 'dusk';
+  return 'night';
+}
+
+function clockText(now) {
+  const h = now.getHours();
+  const hh = prefs.hour12 ? String(h % 12 || 12) : String(h).padStart(2, '0');
+  return hh + ':' + String(now.getMinutes()).padStart(2, '0');
+}
+
+function renderClock() {
+  const now = new Date();
+  const h = now.getHours();
+  $('clock').innerHTML = escapeHtml(clockText(now)) + (prefs.hour12 ? `<span class="ampm">${h < 12 ? 'AM' : 'PM'}</span>` : '');
+  $('date').textContent = longDate(now);
+  $('today-clock').textContent = clockText(now);
+  $('today-date').textContent = longDate(now);
+
+  const sky = 'sky-' + skyFor(h);
+  if (!document.body.classList.contains(sky)) {
+    document.body.classList.remove('sky-dawn', 'sky-day', 'sky-dusk', 'sky-night');
+    document.body.classList.add(sky);
+  }
+}
+
+// ---------- Night mode (darker sky, no photo, quieter tiles) ----------
+
+function applyNight() {
+  const h = new Date().getHours();
+  document.body.classList.toggle('night', prefs.night && (h >= NIGHT_FROM || h < NIGHT_UNTIL));
+}
+
+function everyMinute() {
+  renderClock();
+  renderGlance();
+  if (view === 'today') renderTodayAgenda();
+  applyNight();
+  if (saverOn) renderSaver();
+}
+
+function startClock() {
+  everyMinute();
+  // Tick on the minute boundary so the display never lags.
+  setTimeout(() => { everyMinute(); setInterval(everyMinute, 60000); }, 60000 - (Date.now() % 60000) + 50);
+}
+
+// ---------- Weather (Open-Meteo, no key needed) ----------
 
 // WMO weather code → [index into STRINGS.wx, icon]
 function describe(code, isDay = true) {
@@ -384,8 +421,6 @@ function describe(code, isDay = true) {
   return [3, 'cloud'];
 }
 
-const svg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
-
 let lastWeather = null;
 
 async function loadWeather() {
@@ -393,8 +428,7 @@ async function loadWeather() {
   const url = 'https://api.open-meteo.com/v1/forecast'
     + `?latitude=${lat}&longitude=${lon}`
     + '&current=temperature_2m,apparent_temperature,weather_code,is_day'
-    + '&daily=weather_code,temperature_2m_max,temperature_2m_min'
-    + '&timezone=auto&forecast_days=4';
+    + '&timezone=auto';
   try {
     lastWeather = JSON.parse(await fetchText(url));
   } catch (e) {
@@ -403,36 +437,26 @@ async function loadWeather() {
   renderWeather();
 }
 
+function feelsText(cur) {
+  return typeof cur.apparent_temperature === 'number' ? `${t('feels')} ${Math.round(cur.apparent_temperature)}°` : '';
+}
+
 function renderWeather() {
-  $('weather-city').textContent = prefs.city.name;
-  if (!lastWeather || !lastWeather.current) {
+  const cur = lastWeather && lastWeather.current;
+  if (!cur) {
     $('weather-icon').innerHTML = '';
     $('weather-temp').textContent = '';
     $('weather-desc').textContent = t('weatherError');
-    $('weather-feels').textContent = '';
-    $('forecast').innerHTML = '';
-    document.body.classList.remove('overcast');
+    $('weather-sub').textContent = prefs.city.name;
+    $('today-weather').textContent = '';
     return;
   }
-
-  const cur = lastWeather.current;
   const [wx, icon] = describe(cur.weather_code, cur.is_day === 1);
   $('weather-icon').innerHTML = svg(icon);
   $('weather-temp').textContent = Math.round(cur.temperature_2m) + '°';
   $('weather-desc').textContent = t('wx')[wx];
-  $('weather-feels').innerHTML = typeof cur.apparent_temperature === 'number'
-    ? `${t('feels')} <b>${Math.round(cur.apparent_temperature)}°</b>` : '';
-  document.body.classList.toggle('overcast', cur.weather_code >= 3);
-
-  const d = lastWeather.daily;
-  const dayName = new Intl.DateTimeFormat(t('locale'), { weekday: 'short' });
-  $('forecast').innerHTML = d.time.slice(1, 4).map((iso, i) => {
-    const k = i + 1;
-    const [, dIcon] = describe(d.weather_code[k]);
-    const label = dayName.format(new Date(iso + 'T12:00:00')).replace('.', '');
-    return `<li><span class="day">${label}</span>${svg(dIcon)}`
-      + `<span class="range">${Math.round(d.temperature_2m_max[k])}°<span>${Math.round(d.temperature_2m_min[k])}°</span></span></li>`;
-  }).join('');
+  $('weather-sub').textContent = [feelsText(cur), prefs.city.name].filter(Boolean).join(' · ');
+  $('today-weather').textContent = [Math.round(cur.temperature_2m) + '°', feelsText(cur)].filter(Boolean).join(' · ');
 }
 
 // ---------- Agenda (secret iCal address) ----------
@@ -444,107 +468,144 @@ async function loadCalendar() {
   if (!prefs.calendarUrl) {
     calendarEvents = null;
     calendarFailed = false;
-    renderAgenda();
-    return true;
+  } else {
+    try {
+      calendarEvents = Calendar.parse(await fetchText(prefs.calendarUrl.replace(/^webcal:/i, 'https:')));
+      calendarFailed = false;
+    } catch (e) {
+      calendarFailed = true;
+    }
   }
-  try {
-    calendarEvents = Calendar.parse(await fetchText(prefs.calendarUrl.replace(/^webcal:/i, 'https:')));
-    calendarFailed = false;
-  } catch (e) {
-    calendarFailed = true;
-  }
-  renderAgenda();
+  renderGlance();
+  renderTodayAgenda();
+  if (view === 'week') renderWeek();
   return !calendarFailed;
 }
 
-const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
-const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
 // Events from now through the next AGENDA_DAYS days.
-function upcoming() {
+function upcoming(days = AGENDA_DAYS) {
+  if (!calendarEvents) return [];
   const now = new Date();
-  return Calendar.between(calendarEvents, now, addDays(startOfDay(now), AGENDA_DAYS));
+  return Calendar.between(calendarEvents, now, addDays(startOfDay(now), days));
 }
 
-// "Hoje", "Amanhã" or a short weekday ("Dom.").
-function shortDay(date) {
-  const today = startOfDay(new Date());
-  if (date < addDays(today, 1)) return t('today');
-  if (date < addDays(today, 2)) return t('tomorrow');
-  return capitalize(date.toLocaleDateString(t('locale'), { weekday: 'short' }));
+function eventDetails(ev) {
+  const parts = [];
+  if (!ev.allDay && ev.end - ev.start > 0) parts.push(`${t('until')} ${formatTime(ev.end)}`);
+  if (ev.location) parts.push(ev.location);
+  return parts.join(' · ');
 }
 
-function eventWhen(ev) {
+// ---------- Home: the next event and reminder ----------
+
+function renderGlance() {
   const now = new Date();
-  if (!ev.allDay && ev.start <= now && ev.end > now) return t('now');
-  return shortDay(ev.start) + ', ' + (ev.allDay ? t('allDay').toLowerCase() : formatTime(ev.start));
+  const title = $('next-title');
+  const sub = $('next-sub');
+  if (!prefs.calendarUrl) {
+    title.textContent = '';
+    sub.textContent = t('agendaConnect');
+  } else if (calendarFailed) {
+    title.textContent = '';
+    sub.textContent = t('agendaError');
+  } else {
+    const ev = upcoming()[0];
+    if (!ev) {
+      title.textContent = calendarEvents ? t('nothingNext') : '';
+      sub.textContent = '';
+    } else {
+      const happening = !ev.allDay && ev.start <= now && ev.end > now;
+      const today = ev.start < addDays(startOfDay(now), 1);
+      let when;
+      if (happening) when = t('now');
+      else if (ev.allDay) when = shortDay(ev.start);
+      else when = today ? formatTime(ev.start) : `${shortDay(ev.start)} ${formatTime(ev.start)}`;
+      title.innerHTML = `<span class="time">${escapeHtml(when)}</span>${escapeHtml(ev.title)}`;
+      const bits = [];
+      if (!happening && !ev.allDay && today) bits.push(inTime(ev.start - now));
+      else if (eventDetails(ev)) bits.push(...eventDetails(ev).split(' · ').slice(0, 1));
+      if (ev.location && bits.indexOf(ev.location) < 0) bits.push(ev.location);
+      sub.textContent = bits.join(' · ');
+    }
+  }
+
+  const list = pendingNotes();
+  const first = list[0];
+  $('next-reminder').innerHTML = first
+    ? svg('bell') + `<span>${escapeHtml(first.text)}${first.at ? ' · ' + escapeHtml(noteTime(first.at)) : ''}</span>`
+      + (list.length > 1 ? `<span class="more">${escapeHtml(fill(t('moreNotes'), list.length - 1))}</span>` : '')
+    : '';
 }
 
-function renderAgenda() {
-  const list = $('agenda-list');
-  const note = $('agenda-note');
-  const more = $('agenda-more');
-  list.innerHTML = '';
-  note.textContent = '';
-  more.hidden = true;
+// ---------- Today panel ----------
 
-  if (!prefs.calendarUrl) { note.textContent = t('agendaConnect'); return; }
-  if (calendarFailed) { note.textContent = t('agendaError'); return; }
-  if (!calendarEvents) return;
-
-  const now = new Date();
-  const all = upcoming();
-  const items = all.slice(0, HOME_EVENTS);
-  if (!items.length) { note.textContent = t('agendaEmpty'); return; }
-
-  list.innerHTML = items.map((ev) => {
-    const happening = !ev.allDay && ev.start <= now && ev.end > now;
-    return `<li${happening ? ' class="is-now"' : ''}><span class="when">${escapeHtml(eventWhen(ev))}</span>`
-      + `<span class="what">${escapeHtml(ev.title)}</span></li>`;
+function renderTodayAgenda() {
+  const box = $('today-agenda');
+  if (!prefs.calendarUrl) { box.innerHTML = `<p class="note">${escapeHtml(t('agendaConnect'))}</p>`; return; }
+  if (calendarFailed) { box.innerHTML = `<p class="note">${escapeHtml(t('agendaError'))}</p>`; return; }
+  const items = upcoming(2).slice(0, TODAY_EVENTS);
+  if (!items.length) { box.innerHTML = `<p class="note">${escapeHtml(t('agendaEmpty'))}</p>`; return; }
+  const tomorrow = addDays(startOfDay(new Date()), 1);
+  let shownTomorrow = false;
+  box.innerHTML = items.map((ev) => {
+    let head = '';
+    if (ev.start >= tomorrow && !shownTomorrow) {
+      shownTomorrow = true;
+      head = `<p class="subhead">${escapeHtml(t('tomorrow'))}</p>`;
+    }
+    const details = eventDetails(ev);
+    return head + `<div class="row" data-nav tabindex="-1"><span class="time">${escapeHtml(ev.allDay ? t('allDay') : formatTime(ev.start))}</span>`
+      + `<div><p class="what">${escapeHtml(ev.title)}</p>${details ? `<p class="details">${escapeHtml(details)}</p>` : ''}</div></div>`;
   }).join('');
-
-  const extra = all.length - items.length;
-  more.innerHTML = escapeHtml(t('fullAgenda')) + (extra > 0 ? ` <span>+${extra}</span>` : '');
-  more.hidden = false;
-  if (view === 'agenda') renderAgendaView();
 }
 
-// The full agenda: the next days, grouped by day.
-function renderAgendaView() {
-  const box = $('agenda-days');
-  const all = calendarEvents ? upcoming() : [];
-  const today = startOfDay(new Date());
-  const groups = [];
-  all.forEach((ev) => {
-    const day = ev.start < today ? today : startOfDay(ev.start);
-    let g = groups[groups.length - 1];
-    if (!g || g.day.getTime() !== day.getTime()) groups.push(g = { day, events: [] });
-    g.events.push(ev);
-  });
-
-  box.innerHTML = groups.map((g) => {
-    const date = g.day.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' });
-    const offset = Math.round((g.day - today) / 86400000);
-    const title = offset === 0 ? `${t('today')} · ${date}` : offset === 1 ? `${t('tomorrow')} · ${date}` : capitalize(date);
-    return `<section class="day"><h2>${escapeHtml(title)}</h2>` + g.events.map((ev) => {
-      const time = ev.allDay ? t('allDay') : formatTime(ev.start);
-      const details = [];
-      if (!ev.allDay && ev.end - ev.start > 0) details.push(`${t('until')} ${formatTime(ev.end)}`);
-      if (ev.location) details.push(ev.location);
-      return `<div class="ev" data-nav tabindex="-1"><span class="when">${escapeHtml(time)}</span><div>`
-        + `<p class="what">${escapeHtml(ev.title)}</p>`
-        + (details.length ? `<p class="details">${escapeHtml(details.join(' · '))}</p>` : '')
-        + '</div></div>';
-    }).join('') + '</section>';
-  }).join('') || `<p class="note">${escapeHtml(t('agendaEmpty'))}</p>`;
+function renderTodayNotes() {
+  const list = pendingNotes().slice(0, TODAY_NOTES);
+  $('today-notes').innerHTML = list.map(noteRowHtml).join('')
+    || `<p class="note">${escapeHtml(t('notesEmpty'))}</p>`;
+  renderPhoneBits();
 }
 
-$('agenda-more').addEventListener('click', () => {
-  renderAgendaView();
-  openView('agenda', $('agenda-days').querySelector('.ev') || $('agenda-back'));
+function openToday() {
+  renderClock();
+  renderWeather();
+  renderTodayAgenda();
+  renderTodayNotes();
+  const first = $('today-view').querySelector('.col-body [data-nav]') || $('week-btn');
+  openView('today', first);
+}
+
+$('today-handle').addEventListener('click', openToday);
+$('week-btn').addEventListener('click', () => { renderWeek(); openView('week', $('week-grid').querySelector('[data-nav]') || $('week-back')); });
+$('today-new-note').addEventListener('click', () => openNewNote());
+$('today-notes').addEventListener('click', (e) => {
+  const row = e.target.closest('[data-note]');
+  if (row) toggleNote(row.dataset.note);
 });
-$('agenda-back').addEventListener('click', () => closeView());
+
+// ---------- Week ----------
+
+function renderWeek() {
+  const all = upcoming();
+  const today = startOfDay(new Date());
+  $('week-count').textContent = fill(t('eventsCount'), all.length);
+  let html = '';
+  for (let i = 0; i < AGENDA_DAYS; i++) {
+    const day = addDays(today, i);
+    const next = addDays(today, i + 1);
+    const events = all.filter((ev) => (i === 0 ? ev.start < next : ev.start >= day && ev.start < next));
+    const label = i === 0 ? t('today') : capitalize(day.toLocaleDateString(t('locale'), { weekday: 'short' })).replace('.', '');
+    html += `<div class="day-col${i === 0 ? ' today' : ''}"><p class="weekday">${escapeHtml(label)}</p><p class="num">${day.getDate()}</p>`
+      + events.map((ev) => {
+        const details = eventDetails(ev);
+        return `<div class="ev-card" data-nav tabindex="-1"><p class="time">${escapeHtml(ev.allDay ? t('allDay') : formatTime(ev.start))}</p>`
+          + `<p class="what">${escapeHtml(ev.title)}</p>${details ? `<p class="details">${escapeHtml(details)}</p>` : ''}</div>`;
+      }).join('') + '</div>';
+  }
+  $('week-grid').innerHTML = html;
+}
+
+$('week-back').addEventListener('click', () => closeView());
 
 // ---------- Headlines (RSS) ----------
 
@@ -557,7 +618,7 @@ function newsSource() {
   return NEWS[newsKey()];
 }
 
-// Left/right on the switcher next to "Headlines" changes the source and remembers it.
+// Left/right on the switcher next to "News" changes the source and remembers it.
 function cycleNews(step) {
   const keys = Object.keys(NEWS);
   const i = keys.indexOf(newsKey());
@@ -568,8 +629,8 @@ function cycleNews(step) {
 
 async function loadNews() {
   const source = newsSource();
-  const section = $('news-list').closest('section');
-  section.hidden = !source;
+  const col = $('news-list').closest('.col');
+  col.hidden = !source;
   if (!source) return;
 
   const keys = Object.keys(NEWS);
@@ -581,7 +642,7 @@ async function loadNews() {
     const titles = [...xml.querySelectorAll('item > title, entry > title')]
       .map((el) => decodeEntities(el.textContent).trim())
       .filter(Boolean)
-      .slice(0, 3);
+      .slice(0, HEADLINES);
     if (!titles.length) throw new Error('empty feed');
     $('news-list').innerHTML = titles.map((title) => `<li>${escapeHtml(title)}</li>`).join('');
   } catch (e) {
@@ -595,6 +656,8 @@ function decodeEntities(s) {
   el.innerHTML = s;
   return el.value;
 }
+
+$('news-switch').addEventListener('click', () => cycleNews(1));
 
 // ---------- Background photos (Bing photo of the day) ----------
 
@@ -610,6 +673,7 @@ async function loadPhotos() {
     $('photo-a').classList.remove('is-shown');
     $('photo-b').classList.remove('is-shown');
     $('photo-credit').textContent = '';
+    $('saver-credit').textContent = '';
     return;
   }
   // Bing serves at most 8 photos per request and keeps about 15 days, so ask for both halves.
@@ -672,7 +736,7 @@ const art = {};
 
 function artFor(pkg) {
   if (!(pkg in art)) {
-    try { art[pkg] = native.appArt ? JSON.parse(native.appArt(pkg)) : {}; } catch (e) { art[pkg] = {}; }
+    try { art[pkg] = native && native.appArt ? JSON.parse(native.appArt(pkg)) : {}; } catch (e) { art[pkg] = {}; }
   }
   return art[pkg];
 }
@@ -693,107 +757,98 @@ function appFor(id) {
     const pkg = id.slice(4);
     const found = installed && installed.find((a) => a.pkg === pkg);
     if (installed && !found) return null; // uninstalled since; skip it
-    return { id, name: found ? found.label : pkg, color: colorFor(pkg), packages: [pkg] };
+    const known = APPS.find((a) => a.packages.indexOf(pkg) >= 0);
+    return { id, name: found ? found.label : pkg, color: known ? known.color : colorFor(pkg), ink: known && known.ink, packages: [pkg] };
   }
   const app = APPS.find((a) => a.name === id);
   return app ? Object.assign({ id }, app) : null;
 }
 
+// Until the viewer arranges the row, the default apps that aren't installed stay out of it.
 function rowApps() {
-  return rowIds().map(appFor).filter(Boolean);
+  const apps = rowIds().map(appFor).filter(Boolean);
+  return prefs.apps || !installed ? apps : apps.filter((app) => packageFor(app));
 }
 
 function saveRow(apps) {
   prefs.apps = apps.map((a) => a.id);
   store.set('apps', prefs.apps);
-  renderApps();
 }
 
-function tileHtml(app, attrs) {
+function tileHtml(app, i) {
   const pkg = packageFor(app);
   const look = pkg ? artFor(pkg) : {};
   const name = escapeHtml(app.name);
-  const open = `<button class="app${look.banner ? ' has-banner' : ''}" data-nav ${attrs} aria-label="${name}"`
+  const open = `<button class="app${look.banner ? ' has-banner' : ''}" data-nav data-app="${i}" aria-label="${name}"`
     + ` style="--tile:${app.color};${app.ink ? `--tile-ink:${app.ink}` : ''}">`;
   if (look.banner) return open + `<img class="banner" src="${look.banner}" alt=""></button>`;
-  const mark = look.icon
-    ? `<img class="icon" src="${look.icon}" alt="">`
-    : `<span class="mark" aria-hidden="true">${escapeHtml(app.name[0])}</span>`;
-  return open + (installed && !pkg ? `<span class="badge">${t('install')}</span>` : '') + mark + name + '</button>';
+  return open + (look.icon ? `<img class="icon" src="${look.icon}" alt="">` : '')
+    + (installed && !pkg ? `<span class="badge">${t('install')}</span>` : '') + name + '</button>';
 }
-
-const PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
 
 function renderApps() {
   refreshInstalled();
-  $('app-row').innerHTML = rowApps().map((app, i) => `<li>${tileHtml(app, `data-app="${i}"`)}</li>`).join('')
-    + `<li><button class="app-add" id="app-add" data-nav aria-label="${escapeHtml(t('organize'))}">${PLUS}</button></li>`;
+  const row = $('app-row');
+  row.classList.toggle('moving', moving !== null);
+  row.innerHTML = rowApps().map((app, i) =>
+    `<li${i === moving ? ' class="lifted"' : ''}><span class="arrow left">${svg('left')}</span>${tileHtml(app, i)}<span class="arrow right">${svg('right')}</span></li>`).join('')
+    + `<li><button class="app-add" id="app-add" data-nav aria-label="${escapeHtml(t('addTitle'))}">${svg('plus')}</button></li>`;
 }
 
 function launchApp(app) {
-  if (!native) return;
+  if (!native || !app) return;
   const pkg = packageFor(app);
   if (!pkg || !native.launch(pkg)) native.openStore(app.name);
 }
 
 $('app-row').addEventListener('click', (e) => {
-  if (e.target.closest('#app-add')) { openOrganizer(0); return; }
+  if (e.target.closest('#app-add')) { openAdder(); return; }
   const btn = e.target.closest('[data-app]');
-  if (btn) launchApp(rowApps()[Number(btn.dataset.app)]);
+  if (!btn) return;
+  if (moving !== null) { endMove(); return; }
+  launchApp(rowApps()[Number(btn.dataset.app)]);
 });
 
-// ---------- Arrange apps ----------
+// Moving a tile: the lifted tile swaps with its neighbour on each arrow press.
+let moving = null;
 
-let editSel = 0;
-
-function openOrganizer(index) {
-  editSel = index;
-  renderEditor();
-  openView('apps', $('edit-row').querySelector(`[data-edit="${editSel}"]`));
+function startMove(i) {
+  moving = i;
+  document.body.classList.add('moving-app');
+  $('move-hint').innerHTML = t('moveHint');
+  $('move-hint').hidden = false;
+  renderApps();
+  focus($('app-row').querySelector(`[data-app="${i}"]`));
 }
 
-function renderEditor() {
+function stepMove(step) {
   const apps = rowApps();
-  editSel = Math.max(0, Math.min(editSel, apps.length - 1));
-  $('edit-row').innerHTML = apps.map((app, i) =>
-    `<li${i === editSel ? ' class="is-picked"' : ''}>${tileHtml(app, `data-edit="${i}"`)}</li>`).join('')
-    + `<li><button class="app-add wide" id="add-app" data-nav>${PLUS}<span>${escapeHtml(t('addApp'))}</span></button></li>`;
-  renderEditorStatus();
-}
-
-function renderEditorStatus() {
-  const apps = rowApps();
-  if (!apps.length) { $('edit-status').textContent = ''; return; }
-  $('edit-status').innerHTML = `<b>${escapeHtml(apps[editSel].name)}</b> · `
-    + escapeHtml(t('position').replace('{n}', editSel + 1).replace('{total}', apps.length));
-  $('edit-row').querySelectorAll('li').forEach((li, i) => li.classList.toggle('is-picked', i === editSel));
-}
-
-function moveApp(step) {
-  const apps = rowApps();
-  const j = editSel + step;
+  const j = moving + step;
   if (j < 0 || j >= apps.length) return;
-  [apps[editSel], apps[j]] = [apps[j], apps[editSel]];
-  editSel = j;
+  [apps[moving], apps[j]] = [apps[j], apps[moving]];
   saveRow(apps);
-  renderEditor();
+  moving = j;
+  renderApps();
+  focus($('app-row').querySelector(`[data-app="${j}"]`));
 }
 
-$('move-left').addEventListener('click', () => moveApp(-1));
-$('move-right').addEventListener('click', () => moveApp(1));
-$('remove-app').addEventListener('click', () => {
+function endMove() {
+  const i = moving;
+  moving = null;
+  document.body.classList.remove('moving-app');
+  $('move-hint').hidden = true;
+  renderApps();
+  focus($('app-row').querySelector(`[data-app="${i}"]`));
+}
+
+function removeApp(i) {
   const apps = rowApps();
   if (apps.length <= 1) return;
-  apps.splice(editSel, 1);
+  apps.splice(i, 1);
   saveRow(apps);
-  renderEditor();
-});
-$('apps-done').addEventListener('click', () => closeView());
-$('edit-row').addEventListener('click', (e) => {
-  if (e.target.closest('#add-app')) { openAdder(); return; }
-  const btn = e.target.closest('[data-edit]');
-  if (btn) { editSel = Number(btn.dataset.edit); renderEditorStatus(); }
-});
+  renderApps();
+  focus($('app-row').querySelector(`[data-app="${Math.min(i, apps.length - 1)}"]`));
+}
 
 // ---------- Add an installed app ----------
 
@@ -804,29 +859,27 @@ function inRow(pkg) {
 function openAdder() {
   refreshInstalled();
   renderAdder();
-  openView('add', $('add-grid').querySelector('[data-pkg]') || $('add-back'));
+  openView('add', $('add-grid').querySelector('[data-pkg]') || $('add-done'));
   loadAdderArt();
 }
 
 function renderAdder() {
   const list = (installed || []).slice().sort((a, b) => a.label.localeCompare(b.label));
+  $('add-count').textContent = native ? fill(t('addCount'), list.length) : '';
   $('add-note').textContent = native ? '' : t('addOnlyTv');
   $('add-grid').innerHTML = list.map((a) => {
     const look = art[a.pkg] || {};
-    const name = escapeHtml(a.label);
-    const badge = inRow(a.pkg) ? `<span class="badge on">✓ ${escapeHtml(t('inRow'))}</span>` : '';
-    if (look.banner) {
-      return `<button class="app has-banner" data-nav data-pkg="${escapeHtml(a.pkg)}" aria-label="${name}">`
-        + `<img class="banner" src="${look.banner}" alt="">${badge}</button>`;
-    }
     const known = APPS.find((app) => app.packages.indexOf(a.pkg) >= 0);
-    const tile = known ? `--tile:${known.color};${known.ink ? `--tile-ink:${known.ink}` : ''}` : `--tile:${colorFor(a.pkg)}`;
-    return `<button class="app" data-nav data-pkg="${escapeHtml(a.pkg)}" style="${tile}">`
-      + badge + name + '</button>';
+    const color = known ? known.color : colorFor(a.pkg);
+    const icon = look.icon ? `<img src="${look.icon}" alt="">` : escapeHtml(a.label.charAt(0));
+    return `<button class="add-tile" data-nav data-pkg="${escapeHtml(a.pkg)}" style="--tile:${color}">`
+      + `<span class="icon" aria-hidden="true">${icon}</span><span class="name">${escapeHtml(a.label)}</span>`
+      + (inRow(a.pkg) ? `<svg class="tick" viewBox="0 0 24 24" role="img" aria-label="✓">${ICONS.check}</svg>` : '')
+      + '</button>';
   }).join('');
 }
 
-// Banners take a moment each to read, so they arrive one by one after the grid shows.
+// Icons take a moment each to read, so they arrive a few at a time after the grid shows.
 function loadAdderArt() {
   const missing = (installed || []).filter((a) => !(a.pkg in art));
   const step = () => {
@@ -853,10 +906,11 @@ $('add-grid').addEventListener('click', (e) => {
     apps.push(appFor('pkg:' + pkg));
     saveRow(apps);
   }
+  renderApps();
   renderAdder();
   focus($('add-grid').querySelector(`[data-pkg="${pkg}"]`));
 });
-$('add-back').addEventListener('click', () => { renderEditor(); openView('apps', $('add-app')); });
+$('add-done').addEventListener('click', () => closeView());
 
 // ---------- Notes and reminders ----------
 
@@ -865,7 +919,8 @@ let notes = store.get('notes', []);
 
 function saveNotes() {
   store.set('notes', notes);
-  renderNoteChips();
+  renderGlance();
+  if (view === 'today') renderTodayNotes();
   if (view === 'notes') renderNotesView();
 }
 
@@ -884,10 +939,10 @@ function pendingNotes() {
   });
 }
 
-// "19:00" today, "Amanhã, 8:00" or "Seg., 9:00" otherwise.
+// "19:00" today, "Amanhã 8:00" or "Seg. 9:00" otherwise.
 function noteTime(at) {
   const d = new Date(at);
-  return d < addDays(startOfDay(new Date()), 1) ? formatTime(d) : shortDay(d) + ', ' + formatTime(d);
+  return d < addDays(startOfDay(new Date()), 1) ? formatTime(d) : shortDay(d) + ' ' + formatTime(d);
 }
 
 // Pulls a time out of the text, so "dentista amanhã 9h" becomes "dentista" at 9:00 tomorrow.
@@ -940,21 +995,30 @@ function setDone(id, done) {
   saveNotes();
 }
 
-const BELL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2Z"/><path d="M10 21h4"/></svg>';
-const PHONE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
-const CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
-const TRASH = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>';
+function toggleNote(id) {
+  const n = notes.find((x) => x.id === id);
+  if (!n) return;
+  setDone(id, !n.done);
+  focus(document.querySelector(`#${view === 'notes' ? 'notes-list' : 'today-notes'} [data-note="${id}"]`));
+}
 
-// The home screen shows the next few as chips under the agenda.
-function renderNoteChips() {
-  const list = pendingNotes();
-  const shown = list.slice(0, HOME_NOTES);
-  $('note-chips').innerHTML = shown.map((n) =>
-    `<button class="chip${n.at ? ' timed' : ''}" data-nav data-chip="${n.id}">`
-    + (n.at ? BELL : '') + `<span class="chip-text">${escapeHtml(n.text)}</span>`
-    + (n.at ? `<b>${escapeHtml(noteTime(n.at))}</b>` : '') + '</button>').join('')
-    + (list.length > shown.length ? `<button class="chip" data-nav data-chip="more">+${list.length - shown.length}</button>` : '')
-    + `<button class="chip add" data-nav data-chip="new">${PLUS}<span>${escapeHtml(t('newShort'))}</span></button>`;
+function deleteNote(id) {
+  const scope = view === 'notes' ? $('notes-list') : $('today-notes');
+  const rows = [...scope.querySelectorAll('[data-note]')];
+  const i = rows.findIndex((r) => r.dataset.note === id);
+  notes = notes.filter((n) => n.id !== id);
+  saveNotes();
+  const left = scope.querySelectorAll('[data-note]');
+  focus(left[Math.min(i, left.length - 1)] || (view === 'notes' ? $('notes-new') : $('today-new-note')));
+}
+
+function noteRowHtml(n) {
+  const meta = n.at && !n.done
+    ? `<span class="meta timed">${svg('bell')}${escapeHtml(noteTime(n.at))}</span>`
+    : n.from === 'phone' ? `<span class="meta">${svg('phone')}</span>` : '';
+  return `<div class="note-row${n.done ? ' done' : ''}" data-nav tabindex="-1" data-note="${n.id}">`
+    + `<span class="check">${n.done ? svg('check') : ''}</span>`
+    + `<span class="text">${escapeHtml(n.text)}</span>${meta}</div>`;
 }
 
 function openNotes(focusId) {
@@ -966,67 +1030,23 @@ function openNotes(focusId) {
 
 function renderNotesView() {
   const list = pendingNotes().concat(notes.filter((n) => n.done));
-  $('notes-list').innerHTML = list.map((n) =>
-    `<div class="note-row${n.done ? ' done' : ''}" data-nav tabindex="-1" data-note="${n.id}">`
-    + `<span class="check">${n.done ? CHECK : ''}</span>`
-    + `<span class="note-text">${escapeHtml(n.text)}</span>`
-    + (n.from === 'phone' ? `<span class="from">${PHONE}</span>` : '')
-    + (n.at && !n.done ? `<span class="when">${BELL}${escapeHtml(noteTime(n.at))}</span>` : '')
-    + `<button class="note-del" data-nav data-del="${n.id}" aria-label="${escapeHtml(t('deleteNote'))}">${TRASH}</button>`
-    + '</div>').join('') || `<p class="note">${escapeHtml(t('notesEmpty'))}</p>`;
-  renderPhonePanel();
+  $('notes-count').textContent = fill(t('notesPending'), pendingNotes().length);
+  $('notes-list').innerHTML = list.map(noteRowHtml).join('')
+    || `<p class="note">${escapeHtml(t('notesEmpty'))}</p>`;
+  renderPhoneBits();
 }
-
-function phoneAddress() {
-  return 'ntfy.sh/' + ntfyTopic();
-}
-
-function renderPhonePanel() {
-  $('phone-panel').hidden = !prefs.phoneNotes;
-  if (!prefs.phoneNotes) return;
-  $('phone-address').textContent = phoneAddress();
-  if (typeof qrcode === 'function' && !$('phone-qr').dataset.topic) {
-    const qr = qrcode(0, 'M');
-    qr.addData(NTFY + ntfyTopic());
-    qr.make();
-    $('phone-qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
-    $('phone-qr').dataset.topic = ntfyTopic();
-  }
-}
-
-$('note-chips').addEventListener('click', (e) => {
-  const chip = e.target.closest('[data-chip]');
-  if (!chip) return;
-  if (chip.dataset.chip === 'new') openNewNote('home');
-  else openNotes(chip.dataset.chip === 'more' ? null : chip.dataset.chip);
-});
 
 $('notes-list').addEventListener('click', (e) => {
-  const del = e.target.closest('[data-del]');
-  if (del) {
-    const rows = [...$('notes-list').querySelectorAll('[data-note]')];
-    const i = rows.findIndex((r) => r.dataset.note === del.dataset.del);
-    notes = notes.filter((n) => n.id !== del.dataset.del);
-    saveNotes();
-    const left = $('notes-list').querySelectorAll('[data-note]');
-    focus(left[Math.min(i, left.length - 1)] || $('notes-new'));
-    return;
-  }
   const row = e.target.closest('[data-note]');
-  if (!row) return;
-  const n = notes.find((x) => x.id === row.dataset.note);
-  if (n) setDone(n.id, !n.done);
-  focus($('notes-list').querySelector(`[data-note="${row.dataset.note}"]`));
+  if (row) toggleNote(row.dataset.note);
 });
-
-$('notes-new').addEventListener('click', () => openNewNote('notes'));
+$('notes-new').addEventListener('click', () => openNewNote());
 $('notes-back').addEventListener('click', () => closeView());
 
 // ---------- New note ----------
 
 const WHENS = ['none', 'half', 'hour', 'tonight', 'morning'];
 let noteWhen = 'none';
-let noteFrom = 'home';
 
 function whenAt(key) {
   const now = new Date();
@@ -1040,23 +1060,19 @@ function whenAt(key) {
   return undefined; // no choice: take a time typed in the text, if any
 }
 
+const pressed = (on) => `aria-pressed="${on}"`;
+
 function renderWhens() {
   const label = { none: 'whenNone', half: 'whenHalf', hour: 'whenHour', tonight: 'whenTonight', morning: 'whenMorning' };
   $('note-when').innerHTML = WHENS.map((k) =>
     `<button type="button" data-nav data-when="${k}" ${pressed(k === noteWhen)}>${escapeHtml(t(label[k]))}</button>`).join('');
 }
 
-function openNewNote(from) {
-  noteFrom = from;
+function openNewNote() {
   noteWhen = 'none';
   $('note-input').value = '';
   renderWhens();
   openView('note-new', $('note-input'));
-}
-
-function leaveNewNote(saved) {
-  if (noteFrom === 'notes' || saved) openNotes(saved && saved.id);
-  else closeView();
 }
 
 $('note-when').addEventListener('click', (e) => {
@@ -1072,9 +1088,12 @@ $('note-form').addEventListener('submit', (e) => {
   const raw = $('note-input').value.trim();
   $('note-input').blur();
   if (!raw) { focus($('note-input')); return; }
-  leaveNewNote(addNote(raw, whenAt(noteWhen), 'tv'));
+  const note = addNote(raw, whenAt(noteWhen), 'tv');
+  closeView();
+  const row = document.querySelector(`#${view === 'notes' ? 'notes-list' : 'today-notes'} [data-note="${note.id}"]`);
+  if (row) focus(row);
 });
-$('note-cancel').addEventListener('click', () => leaveNewNote(null));
+$('note-cancel').addEventListener('click', () => closeView());
 
 // ---------- Reminder alert ----------
 
@@ -1087,11 +1106,11 @@ function checkAlerts() {
   const due = pendingNotes().find((n) => n.at && n.at <= now && !n.alerted);
   if (!due) return;
   noteActivity(); // wake the screensaver: this is worth seeing
+  closeCtx();
   alertNote = due;
   alertReturn = current;
-  $('alert-kicker').textContent = `${t('reminder')} · ${formatTime(new Date(due.at))}`;
+  $('alert-kicker').textContent = `${formatTime(new Date(due.at))} · ${t('reminder')}`;
   $('alert-title').textContent = due.text;
-  $('alert-snooze').hidden = false;
   $('alert').hidden = false;
   focus($('alert-done'));
 }
@@ -1114,16 +1133,16 @@ $('alert-snooze').addEventListener('click', () => {
   closeAlert();
 });
 
-// A short banner for notes that arrive from the phone without a time.
+// A short banner for things that arrive from the phone.
 let toastTimer = null;
-function toast(text) {
-  $('toast').innerHTML = `${PHONE}<span><b>${escapeHtml(t('fromPhone'))}</b> · ${escapeHtml(text)}</span>`;
+function toast(label, text) {
+  $('toast').innerHTML = `${svg('phone')}<span><b>${escapeHtml(label)}</b> · ${escapeHtml(text)}</span>`;
   $('toast').hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { $('toast').hidden = true; }, 12000);
 }
 
-// ---------- Notes from the phone (ntfy.sh) ----------
+// ---------- The phone (ntfy.sh): notes and set-up ----------
 
 function ntfyTopic() {
   let topic = store.get('ntfyTopic', '');
@@ -1137,6 +1156,49 @@ function ntfyTopic() {
   return topic;
 }
 
+const phoneAddress = () => 'ntfy.sh/' + ntfyTopic();
+
+function qrInto(el) {
+  if (typeof qrcode !== 'function' || el.dataset.topic === ntfyTopic()) return;
+  const qr = qrcode(0, 'M');
+  qr.addData(NTFY + ntfyTopic());
+  qr.make();
+  el.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+  el.dataset.topic = ntfyTopic();
+}
+
+// Every place that shows the phone address and code, shown only while the feature is on.
+function renderPhoneBits() {
+  ['today-phone', 'notes-phone', 'setup-card'].forEach((id) => { $(id).hidden = !prefs.phoneNotes; });
+  if (!prefs.phoneNotes) return;
+  document.querySelectorAll('.phone-address').forEach((el) => { el.textContent = phoneAddress(); });
+  ['today-qr', 'notes-qr', 'setup-qr'].forEach((id) => qrInto($(id)));
+}
+
+// "agenda: <address>" or "cidade: <name>" set things up; anything else becomes a note.
+async function phoneCommand(text) {
+  const cal = text.match(/^\s*(?:agenda|calendar|calendrier|calendario|ical)\s*:\s*(\S+)\s*$/i);
+  if (cal) {
+    prefs.calendarUrl = cal[1];
+    store.set('calendarUrl', prefs.calendarUrl);
+    await loadCalendar();
+    toast(t('fromPhone'), calendarFailed ? t('agendaError') : t('agendaSetPhone'));
+    return true;
+  }
+  const city = text.match(/^\s*(?:cidade|city|ville|ciudad)\s*:\s*(.+?)\s*$/i);
+  if (city) {
+    const found = (await searchCities(city[1]))[0];
+    if (found) {
+      setCity(found);
+      toast(t('fromPhone'), `${t('citySetPhone')} ${found.name}`);
+    } else {
+      toast(t('fromPhone'), t('noResults'));
+    }
+    return true;
+  }
+  return false;
+}
+
 // ntfy.sh keeps messages for about 12 hours; ask for everything since the last one seen.
 async function pollPhone() {
   if (!prefs.phoneNotes) return;
@@ -1148,146 +1210,144 @@ async function pollPhone() {
     return; // offline; try again next time
   }
   let last = null;
+  const messages = [];
   text.split('\n').forEach((line) => {
     if (!line.trim()) return;
     let msg;
     try { msg = JSON.parse(line); } catch (e) { return; }
     if (msg.event !== 'message' || !msg.message) return;
     last = msg.id;
-    const body = msg.title ? `${msg.title}: ${msg.message}` : msg.message;
-    const note = addNote(body, undefined, 'phone');
-    if (!note.at) toast(note.text);
+    messages.push(msg.title ? `${msg.title}: ${msg.message}` : msg.message);
   });
   if (last) store.set('ntfySince', last);
+  for (const body of messages) {
+    if (await phoneCommand(body)) continue;
+    const note = addNote(body, undefined, 'phone');
+    if (!note.at) toast(t('fromPhone'), note.text);
+  }
   checkAlerts();
 }
 
-// ---------- Settings ----------
+// ---------- Weather city search (Settings and the phone) ----------
 
-const pressed = (on) => `aria-pressed="${on}"`;
-
-function renderChoices() {
-  $('lang-choices').innerHTML = Object.keys(STRINGS).map((code) =>
-    `<button data-nav data-lang="${code}" ${pressed(code === prefs.lang)}>${STRINGS[code].label}</button>`
-  ).join('');
-  $('hour-choices').innerHTML = [false, true].map((h12) =>
-    `<button data-nav data-hour12="${h12}" ${pressed(h12 === prefs.hour12)}>${h12 ? '12 h' : '24 h'}</button>`
-  ).join('');
-  const percent = new Intl.NumberFormat(t('locale'), { maximumFractionDigits: 1 });
-  $('margin-choices').innerHTML = MARGINS.map((m) =>
-    `<button data-nav data-margin="${m}" ${pressed(m === prefs.margin)}>${percent.format(m)}%</button>`
-  ).join('');
-  const newsKeys = ['auto'].concat(Object.keys(NEWS), ['off']);
-  $('news-choices').innerHTML = newsKeys.map((key) => {
-    const label = key === 'auto' ? t('newsAuto') : key === 'off' ? t('off') : NEWS[key].label;
-    return `<button data-nav data-news="${key}" ${pressed(key === prefs.news)}>${label}</button>`;
-  }).join('');
-  $('phone-choices').innerHTML = [true, false].map((on) =>
-    `<button data-nav data-phone="${on}" ${pressed(on === prefs.phoneNotes)}>${on ? t('on') : t('off')}</button>`
-  ).join('');
-  $('settings-phone-address').textContent = phoneAddress();
-  $('night-choices').innerHTML = [true, false].map((on) =>
-    `<button data-nav data-night="${on}" ${pressed(on === prefs.night)}>${on ? t('on') : t('off')}</button>`
-  ).join('');
-  $('photo-choices').innerHTML = [true, false].map((on) =>
-    `<button data-nav data-photos="${on}" ${pressed(on === prefs.photos)}>${on ? t('on') : t('off')}</button>`
-  ).join('');
-  if (native && native.getAutoStart) {
-    const auto = native.getAutoStart();
-    $('autostart-block').hidden = false;
-    $('autostart-choices').innerHTML = [true, false].map((on) =>
-      `<button data-nav data-autostart="${on}" ${pressed(on === auto)}>${on ? t('on') : t('off')}</button>`
-    ).join('');
+async function searchCities(q) {
+  try {
+    const data = JSON.parse(await fetchText('https://geocoding-api.open-meteo.com/v1/search'
+      + `?name=${encodeURIComponent(q)}&count=4&language=${prefs.lang}&format=json`));
+    return data.results || [];
+  } catch (e) {
+    return [];
   }
 }
 
-function applyLanguage() {
-  document.documentElement.lang = t('locale');
-  document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
-  document.querySelectorAll('[data-i18n-label]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nLabel)); });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
-  renderClock();
-  renderWeather();
-  renderAgenda();
-  renderApps();
-  renderNoteChips();
+function setCity(c) {
+  prefs.city = { name: c.name, lat: c.latitude, lon: c.longitude };
+  store.set('city', prefs.city);
+  loadWeather();
+}
+
+// ---------- Settings: one row per option; OK moves to the next value ----------
+
+const nextOf = (list, value) => list[(list.indexOf(value) + 1) % list.length];
+
+function settingRows() {
+  const percent = new Intl.NumberFormat(t('locale'), { maximumFractionDigits: 1 });
+  const onOff = (on) => (on ? t('on') : t('off'));
+  const newsKeys = ['auto'].concat(Object.keys(NEWS), ['off']);
+  const rows = [
+    { group: 'groupGeneral' },
+    { key: 'lang', label: 'language', value: STRINGS[prefs.lang].label,
+      next() { prefs.lang = nextOf(Object.keys(STRINGS), prefs.lang); store.set('lang', prefs.lang); applyLanguage(); loadNews(); if (prefs.photos) loadPhotos(); } },
+    { key: 'hour12', label: 'clockFormat', value: prefs.hour12 ? '12 h' : '24 h',
+      next() { prefs.hour12 = !prefs.hour12; store.set('hour12', prefs.hour12); everyMinute(); } },
+    { key: 'margin', label: 'margin', value: percent.format(prefs.margin) + '%',
+      next() { prefs.margin = nextOf(MARGINS, prefs.margin); store.set('margin', prefs.margin); fitStage(); } },
+    { group: 'groupInfo' },
+    { key: 'city', label: 'city', value: prefs.city.name, edit: 'city' },
+    { key: 'calendar', label: 'agenda', value: prefs.calendarUrl ? t('connected') : t('notConnected'), ok: !!prefs.calendarUrl && !calendarFailed, edit: 'calendar' },
+    { key: 'news', label: 'newsSource', value: prefs.news === 'auto' ? t('newsAuto') : prefs.news === 'off' ? t('off') : NEWS[prefs.news].label,
+      next() { prefs.news = nextOf(newsKeys, prefs.news); store.set('news', prefs.news); loadNews(); } },
+    { group: 'groupScreen' },
+    { key: 'photos', label: 'photos', value: onOff(prefs.photos),
+      next() { prefs.photos = !prefs.photos; store.set('photos', prefs.photos); loadPhotos(); } },
+    { key: 'night', label: 'nightMode', value: prefs.night ? t('nightRange') : t('off'),
+      next() { prefs.night = !prefs.night; store.set('night', prefs.night); applyNight(); } },
+    { key: 'phone', label: 'phoneNotes', value: onOff(prefs.phoneNotes),
+      next() { prefs.phoneNotes = !prefs.phoneNotes; store.set('phoneNotes', prefs.phoneNotes); renderPhoneBits(); pollPhone(); } },
+  ];
+  if (native && native.getAutoStart) {
+    const auto = native.getAutoStart();
+    rows.push({ key: 'autostart', label: 'autostart', value: onOff(auto), next() { native.setAutoStart(!auto); } });
+  }
+  return rows;
+}
+
+let settingsRows = [];
+
+function renderSettings() {
+  settingsRows = settingRows();
+  $('settings-list').innerHTML = settingsRows.map((r) => (r.group
+    ? `<p class="group">${escapeHtml(t(r.group))}</p>`
+    : `<button class="set-row" data-nav data-setting="${r.key}"><span class="label">${escapeHtml(t(r.label))}</span>`
+      + `<span class="value${r.ok ? ' ok' : ''}">${escapeHtml(r.value)}</span>${svg('right')}</button>`)).join('');
+  renderPhoneBits();
 }
 
 function openSettings() {
-  renderChoices();
-  $('city-status').textContent = '';
-  $('city-results').innerHTML = '';
-  $('calendar-status').textContent = '';
-  $('calendar-input').value = prefs.calendarUrl;
+  renderSettings();
+  showSettingsList();
   $('settings').hidden = false;
   document.body.classList.add('in-settings');
-  $('settings').scrollTop = 0;
-  focus(document.querySelector('#lang-choices [aria-pressed="true"]'));
+  focus($('settings-list').querySelector('[data-setting]'));
 }
 
 function closeSettings() {
   if (document.activeElement) document.activeElement.blur();
   $('settings').hidden = true;
   document.body.classList.remove('in-settings');
-  focus($('settings-btn'));
+  focus(view ? viewFocus[view] || $(view + '-view').querySelector('[data-nav]') : $('settings-btn'));
+}
+
+let editing = null;
+
+function showSettingsList() {
+  editing = null;
+  $('settings-edit').hidden = true;
+  $('settings-list').hidden = false;
+}
+
+function openEditor(which) {
+  editing = which;
+  $('edit-city').hidden = which !== 'city';
+  $('edit-calendar').hidden = which !== 'calendar';
+  $('city-status').textContent = '';
+  $('city-results').innerHTML = '';
+  $('calendar-status').textContent = '';
+  $('calendar-input').value = prefs.calendarUrl;
+  $('settings-list').hidden = true;
+  $('settings-edit').hidden = false;
+  focus(which === 'city' ? $('city-input') : $('calendar-input'));
+}
+
+function leaveEditor() {
+  const key = editing;
+  showSettingsList();
+  renderSettings();
+  focus($('settings-list').querySelector(`[data-setting="${key}"]`));
 }
 
 $('settings-btn').addEventListener('click', openSettings);
-$('close-settings').addEventListener('click', closeSettings);
+$('edit-back').addEventListener('click', leaveEditor);
 
-// One handler for every choice row: update the preference, redraw, keep focus on the same choice.
-$('settings').addEventListener('click', (e) => {
-  const btn = e.target.closest('button');
-  if (!btn || !btn.parentElement.classList.contains('choice-row')) return;
-  const d = btn.dataset;
-  let selector = '';
-
-  if (d.lang) {
-    prefs.lang = d.lang;
-    store.set('lang', prefs.lang);
-    applyLanguage();
-    if (prefs.news === 'auto') loadNews();
-    if (prefs.photos) loadPhotos();
-    selector = `[data-lang="${d.lang}"]`;
-  } else if (d.hour12) {
-    prefs.hour12 = d.hour12 === 'true';
-    store.set('hour12', prefs.hour12);
-    renderClock();
-    renderAgenda();
-    selector = `[data-hour12="${d.hour12}"]`;
-  } else if (d.phone) {
-    prefs.phoneNotes = d.phone === 'true';
-    store.set('phoneNotes', prefs.phoneNotes);
-    pollPhone();
-    selector = `[data-phone="${d.phone}"]`;
-  } else if (d.night) {
-    prefs.night = d.night === 'true';
-    store.set('night', prefs.night);
-    applyNight();
-    selector = `[data-night="${d.night}"]`;
-  } else if (d.margin) {
-    prefs.margin = Number(d.margin);
-    store.set('margin', prefs.margin);
-    fitStage();
-    selector = `[data-margin="${d.margin}"]`;
-  } else if (d.news) {
-    prefs.news = d.news;
-    store.set('news', prefs.news);
-    loadNews();
-    selector = `[data-news="${d.news}"]`;
-  } else if (d.photos) {
-    prefs.photos = d.photos === 'true';
-    store.set('photos', prefs.photos);
-    loadPhotos();
-    selector = `[data-photos="${d.photos}"]`;
-  } else if (d.autostart) {
-    native.setAutoStart(d.autostart === 'true');
-    selector = `[data-autostart="${d.autostart}"]`;
-  } else {
-    return;
-  }
-  renderChoices();
-  focus($('settings').querySelector(selector));
+$('settings-list').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-setting]');
+  if (!btn) return;
+  const row = settingsRows.find((r) => r.key === btn.dataset.setting);
+  if (!row) return;
+  if (row.edit) { openEditor(row.edit); return; }
+  row.next();
+  renderSettings();
+  focus($('settings-list').querySelector(`[data-setting="${row.key}"]`));
 });
 
 let cityMatches = [];
@@ -1299,13 +1359,7 @@ $('city-form').addEventListener('submit', async (e) => {
   $('city-input').blur();
   $('city-status').textContent = t('searching');
   $('city-results').innerHTML = '';
-  try {
-    const data = JSON.parse(await fetchText('https://geocoding-api.open-meteo.com/v1/search'
-      + `?name=${encodeURIComponent(q)}&count=4&language=${prefs.lang}&format=json`));
-    cityMatches = data.results || [];
-  } catch (err) {
-    cityMatches = [];
-  }
+  cityMatches = await searchCities(q);
   if (!cityMatches.length) {
     $('city-status').textContent = t('noResults');
     return;
@@ -1320,11 +1374,8 @@ $('city-form').addEventListener('submit', async (e) => {
 $('city-results').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-city]');
   if (!btn) return;
-  const c = cityMatches[Number(btn.dataset.city)];
-  prefs.city = { name: c.name, lat: c.latitude, lon: c.longitude };
-  store.set('city', prefs.city);
-  loadWeather();
-  closeSettings();
+  setCity(cityMatches[Number(btn.dataset.city)]);
+  leaveEditor();
 });
 
 $('calendar-form').addEventListener('submit', async (e) => {
@@ -1342,15 +1393,96 @@ $('calendar-form').addEventListener('submit', async (e) => {
   $('calendar-status').textContent = ok ? t('calendarSaved') : t('agendaError');
 });
 
-// ---------- Remote control navigation ----------
+function applyLanguage() {
+  document.documentElement.lang = t('locale');
+  document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-label]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nLabel)); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+  renderClock();
+  renderWeather();
+  renderGlance();
+  renderApps();
+  if (view === 'today') { renderTodayAgenda(); renderTodayNotes(); }
+}
+
+// ---------- Context menu (☰ on an app or a note) ----------
+
+let ctxReturn = null;
+let ctxActions = [];
+
+function openCtx(title, items, anchor) {
+  ctxReturn = current;
+  ctxActions = items;
+  $('ctx-title').textContent = title;
+  $('ctx-items').innerHTML = items.map((it, i) =>
+    `<button data-nav data-ctx="${i}"${it.danger ? ' class="danger"' : ''}>${escapeHtml(it.label)}</button>`).join('');
+  $('ctx').hidden = false;
+  // Place it above the anchor (or below, near the top of the screen), in stage pixels.
+  const stage = $('stage').getBoundingClientRect();
+  const r = anchor.getBoundingClientRect();
+  const left = (r.left - stage.left) / stageScale;
+  const top = (r.top - stage.top) / stageScale;
+  const bottom = (r.bottom - stage.top) / stageScale;
+  const h = $('ctx').offsetHeight;
+  $('ctx').style.left = Math.max(56, Math.min(left, 1920 - 56 - 380)) + 'px';
+  $('ctx').style.top = (top - h - 24 > 40 ? top - h - 24 : bottom + 24) + 'px';
+  focus($('ctx-items').querySelector('button'));
+}
+
+function closeCtx(restore) {
+  if ($('ctx').hidden) return;
+  $('ctx').hidden = true;
+  if (restore !== false && ctxReturn && document.body.contains(ctxReturn)) focus(ctxReturn);
+}
+
+$('ctx-items').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-ctx]');
+  if (!btn) return;
+  const action = ctxActions[Number(btn.dataset.ctx)];
+  closeCtx();
+  action.run();
+});
+
+// Options for whatever has focus, if it has any.
+function contextFor(el) {
+  if (!el) return false;
+  if (el.dataset.app && moving === null) {
+    const i = Number(el.dataset.app);
+    const app = rowApps()[i];
+    openCtx(app.name, [
+      { label: t('open'), run: () => launchApp(app) },
+      { label: t('move'), run: () => startMove(i) },
+      { label: t('removeApp'), danger: true, run: () => removeApp(i) },
+      { label: t('addApp'), run: openAdder },
+    ], el);
+    return true;
+  }
+  if (el.dataset.note) {
+    const n = notes.find((x) => x.id === el.dataset.note);
+    if (!n) return false;
+    openCtx(n.text, [
+      { label: n.done ? t('markUndone') : t('markDone'), run: () => toggleNote(n.id) },
+      { label: t('deleteNote'), danger: true, run: () => deleteNote(n.id) },
+    ], el);
+    return true;
+  }
+  return false;
+}
+
+// ---------- Views (Today, week, notes, new note, add app) ----------
 
 let current = null;
-let view = null; // full-screen view over the home screen: 'agenda', 'apps' or 'add'
+let view = null;       // the view on top, or null for the home screen
+const viewStack = [];
+const viewFocus = {};  // where focus was in each view, to come back to it
 let homeFocus = null;
 
+const VIEWS = ['today', 'week', 'notes', 'note-new', 'add'];
+
 function openView(name, target) {
-  if (!view) homeFocus = current;
-  ['agenda', 'apps', 'add', 'notes', 'note-new'].forEach((v) => { $(v + '-view').hidden = v !== name; });
+  if (view) viewFocus[view] = current; else homeFocus = current;
+  if (view !== name) viewStack.push(name);
+  VIEWS.forEach((v) => { $(v + '-view').hidden = v !== name; });
   view = name;
   document.body.classList.add('in-view');
   $(name + '-view').scrollTop = 0;
@@ -1360,11 +1492,21 @@ function openView(name, target) {
 function closeView() {
   if (!view) return;
   $(view + '-view').hidden = true;
-  view = null;
-  document.body.classList.remove('in-view');
-  const back = homeFocus && document.body.contains(homeFocus) ? homeFocus : document.querySelector('#app-row .app');
-  focus(back);
+  viewStack.pop();
+  view = viewStack[viewStack.length - 1] || null;
+  if (view) {
+    $(view + '-view').hidden = false;
+    if (view === 'today') { renderTodayAgenda(); renderTodayNotes(); }
+    if (view === 'notes') renderNotesView();
+    const back = viewFocus[view];
+    focus(back && document.body.contains(back) ? back : $(view + '-view').querySelector('[data-nav]'));
+  } else {
+    document.body.classList.remove('in-view');
+    focus(homeFocus && document.body.contains(homeFocus) ? homeFocus : document.querySelector('#app-row .app'));
+  }
 }
+
+// ---------- Remote control navigation ----------
 
 function focus(el) {
   if (!el) return;
@@ -1378,20 +1520,20 @@ function focus(el) {
     el.focus({ preventScroll: true });
   }
   if (el.closest('#app-row')) revealApp(el.parentElement);
-  if (el.dataset.edit) { editSel = Number(el.dataset.edit); renderEditorStatus(); }
-  if (activeScope() !== $('home')) el.scrollIntoView({ block: 'nearest' });
+  else if (activeScope() !== $('home')) el.scrollIntoView({ block: 'nearest' });
 }
 
 function activeScope() {
+  if (!$('ctx').hidden) return $('ctx');
   if (alertNote) return $('alert');
   if (!$('settings').hidden) return $('settings');
   return view ? $(view + '-view') : $('home');
 }
 
 // Pick the nearest focusable in the pressed direction, favouring items in line with the current one.
-function move(dir) {
+function nearest(dir) {
   const items = [...activeScope().querySelectorAll('[data-nav]')].filter((el) => el.offsetParent !== null);
-  if (!current || items.indexOf(current) < 0) return focus(items[0]);
+  if (!current || items.indexOf(current) < 0) return items[0] || null;
 
   const from = current.getBoundingClientRect();
   const fx = from.left + from.width / 2;
@@ -1416,13 +1558,33 @@ function move(dir) {
     const score = main + cross * 2.5;
     if (score < bestScore) { bestScore = score; best = el; }
   }
-  if (best) focus(best);
+  return best;
+}
+
+let lastAppFocus = null;
+
+function move(dir) {
+  // The home screen has two zones: the settings button up top and the app row. Down opens Today.
+  if (activeScope() === $('home') && current) {
+    if (current.closest('#app-row')) {
+      lastAppFocus = current;
+      if (dir === 'down') { openToday(); return; }
+      if (dir === 'up') { focus($('settings-btn')); return; }
+    } else if (current === $('settings-btn') && dir === 'down') {
+      focus(lastAppFocus && document.body.contains(lastAppFocus) ? lastAppFocus : document.querySelector('#app-row .app'));
+      return;
+    }
+  }
+  const best = nearest(dir);
+  if (best) { focus(best); return; }
+  // Up past the top of Today goes back home.
+  if (view === 'today' && dir === 'up' && $('settings').hidden && $('ctx').hidden && !alertNote) closeView();
 }
 
 // Slide the app row so the focused tile is always fully on screen.
 function revealApp(el) {
   const row = $('app-row');
-  const viewport = row.clientWidth; // the safe area; neighbours may peek past it
+  const viewport = row.parentElement.clientWidth - 224; // the safe area; neighbours may peek past it
   const left = el.offsetLeft;
   const right = left + el.offsetWidth;
   let shift = Number(row.dataset.shift || 0);
@@ -1458,6 +1620,9 @@ function noteActivity() {
 }
 
 function startSaver() {
+  if (alertNote) { saverTimer = setTimeout(startSaver, SAVER_AFTER); return; } // the alert stays in sight
+  closeCtx(false);
+  if (moving !== null) endMove();
   if (!$('settings').hidden) closeSettings();
   saverOn = true;
   renderSaver();
@@ -1468,23 +1633,13 @@ function startSaver() {
 }
 
 function renderSaver() {
-  const now = new Date();
-  const hh = prefs.hour12 ? (now.getHours() % 12 || 12) : String(now.getHours()).padStart(2, '0');
-  $('saver-clock').textContent = hh + ':' + String(now.getMinutes()).padStart(2, '0');
-  $('saver-date').textContent = capitalize(now.toLocaleDateString(t('locale'), { weekday: 'long', day: 'numeric', month: 'long' }));
-
+  $('saver-clock').textContent = clockText(new Date());
+  const bits = [];
   const cur = lastWeather && lastWeather.current;
-  if (cur) {
-    const [, icon] = describe(cur.weather_code, cur.is_day === 1);
-    $('saver-weather').innerHTML = svg(icon) + `<span class="temp">${Math.round(cur.temperature_2m)}°</span>`
-      + (typeof cur.apparent_temperature === 'number'
-        ? `<span class="feels">${t('feels')} ${Math.round(cur.apparent_temperature)}°</span>` : '');
-  } else {
-    $('saver-weather').innerHTML = '';
-  }
-
-  const next = calendarEvents ? upcoming()[0] : null;
-  $('saver-next').innerHTML = next ? `${escapeHtml(eventWhen(next))} · <b>${escapeHtml(next.title)}</b>` : '';
+  if (cur) bits.push(Math.round(cur.temperature_2m) + '°');
+  const next = upcoming()[0];
+  if (next) bits.push(`${next.allDay ? shortDay(next.start) : shortDay(next.start) + ' ' + formatTime(next.start)} ${next.title}`);
+  $('saver-line').textContent = bits.join(' · ');
 
   // Drift a little every minute so nothing stays burnt into the same pixels.
   const dx = Math.round(Math.random() * 48 - 24);
@@ -1497,17 +1652,20 @@ function renderSaver() {
 // Back and Menu; Back returns whether it was used.
 window.tvBack = () => {
   if (noteActivity()) return true;
+  if (!$('ctx').hidden) { closeCtx(); return true; }
+  if (moving !== null) { endMove(); return true; }
   if (alertNote) { alertNote.alerted = true; saveNotes(); closeAlert(); return true; }
-  if (!$('settings').hidden) { closeSettings(); return true; }
-  if (view === 'note-new') { leaveNewNote(null); return true; }
-  if (view === 'add') { renderEditor(); openView('apps', $('add-app')); return true; }
+  if (!$('settings').hidden) { if (editing) leaveEditor(); else closeSettings(); return true; }
   if (view) { closeView(); return true; }
   return false;
 };
 window.tvMenu = () => {
   if (noteActivity()) return;
-  if (view || alertNote) return;
-  if ($('settings').hidden) openSettings(); else closeSettings();
+  if (!$('ctx').hidden) { closeCtx(); return; }
+  if (alertNote || moving !== null) return;
+  if (!$('settings').hidden) { closeSettings(); return; }
+  if (contextFor(current)) return;
+  if (!view) openSettings();
 };
 window.tvResume = () => {
   noteActivity();
@@ -1515,7 +1673,6 @@ window.tvResume = () => {
   renderClock();
   applyNight();
   renderApps();
-  if (view === 'apps') renderEditor();
   pollPhone();
   checkAlerts();
   if (current && current.dataset.app) focus($('app-row').querySelector(`[data-app="${current.dataset.app}"]`));
@@ -1532,21 +1689,21 @@ document.addEventListener('keydown', (e) => {
   }
 }, true);
 
-// OK on a home tile opens the app when released; held down, it opens "Arrange apps" instead.
+// OK on a home tile opens the app when released; held down, it opens the tile's options.
 let pressTimer = null;
 let pressTile = null;
 
 document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter' || !current || !current.dataset.app) return;
+  if (e.key !== 'Enter' || !current || !current.dataset.app || moving !== null || !$('ctx').hidden) return;
   e.preventDefault();
   e.stopImmediatePropagation();
   if (e.repeat || pressTimer) return;
   pressTile = current;
   pressTimer = setTimeout(() => {
     pressTimer = null;
+    contextFor(pressTile);
     pressTile = null;
-    openOrganizer(Number(current.dataset.app));
-  }, 700);
+  }, LONG_PRESS);
 });
 
 document.addEventListener('keyup', (e) => {
@@ -1560,6 +1717,13 @@ document.addEventListener('keyup', (e) => {
 document.addEventListener('keydown', (e) => {
   const dir = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' }[e.key];
   const typing = document.activeElement && document.activeElement.tagName === 'INPUT';
+
+  // While a tile is lifted, left/right move it and OK drops it.
+  if (moving !== null) {
+    if (dir === 'left' || dir === 'right') { e.preventDefault(); stepMove(dir === 'left' ? -1 : 1); return; }
+    if (e.key === 'Enter') { e.preventDefault(); endMove(); return; }
+    if (dir) { e.preventDefault(); return; }
+  }
 
   // On the headline switcher, left/right change the source instead of moving.
   if (current && current.id === 'news-switch' && (dir === 'left' || dir === 'right')) {
@@ -1583,6 +1747,13 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
+  // The remote's ☰ reaches the page as a native call; in a browser, the context-menu key stands in.
+  if (e.key === 'ContextMenu' && !typing) {
+    e.preventDefault();
+    window.tvMenu();
+    return;
+  }
+
   if (e.key === 'Enter' && current && current.tagName === 'INPUT' && !typing) {
     e.preventDefault();
     current.focus();
@@ -1595,8 +1766,6 @@ document.addEventListener('keydown', (e) => {
     current.click();
   }
 });
-
-$('news-switch').addEventListener('click', () => cycleNews(1));
 
 // Keep the highlight in sync if a pointer or the TV's own focus moves it.
 document.addEventListener('focusin', (e) => {
@@ -1615,11 +1784,11 @@ loadPhotos();
 applyNight();
 noteActivity();
 pruneNotes();
-renderNoteChips();
+renderGlance();
 pollPhone();
 checkAlerts();
 setInterval(pollPhone, NOTES_POLL);
-setInterval(() => { checkAlerts(); renderNoteChips(); }, 15 * 1000);
+setInterval(() => { checkAlerts(); renderGlance(); }, 15 * 1000);
 setInterval(pruneNotes, 60 * 60 * 1000);
 setInterval(loadWeather, 15 * 60 * 1000);
 setInterval(loadCalendar, 10 * 60 * 1000);
